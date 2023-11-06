@@ -6,15 +6,17 @@ import { UserInterface } from 'src/authentication/common/interfaces';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class UserStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get<string>('AT_SECRET'),
+      secretOrKey: configService.get<string>('USER_SECRET'),
     });
   }
 
   validate(payload: UserInterface) {
+    console.log(payload, 'ppp');
+
     if (!payload) {
       throw new UnauthorizedException('Unauthorized!');
     }

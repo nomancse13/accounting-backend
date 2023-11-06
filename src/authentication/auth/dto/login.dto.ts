@@ -17,8 +17,7 @@ export class LoginDto {
   readonly password: string;
 
   @ApiPropertyOptional()
-  @IsEnum(UserTypesEnum, { each: true })
   @IsString()
   @IsOptional()
-  readonly userType: UserTypesEnum;
+  readonly userType: string;
 }

@@ -1,10 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   ForbiddenException,
   NotFoundException,
   ConflictException,
 } from '@nestjs/common/exceptions';
-import { ConfigService } from '@nestjs/config';
 import * as randomToken from 'rand-token';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,23 +31,16 @@ import {
   PaginationOptionsInterface,
   UserInterface,
 } from '../common/interfaces';
-import {
-  ChangeForgotPassDto,
-  ForgotPassDto,
-  OtpVerifyDto,
-  ResendOtpDto,
-} from './dto';
+import { ConfigService } from '@nestjs/config';
+import { ChangeForgotPassDto, ForgotPassDto } from './dto';
 import { Brackets } from 'typeorm';
 import { PaginationDataDto } from '../common/dtos';
-import { SystemUserEntity } from 'src/modules/admin/entities';
 import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: BaseRepository<UserEntity>,
-    @InjectRepository(SystemUserEntity)
-    private sytemUserRepository: BaseRepository<SystemUserEntity>,
     private jwtService: JwtService,
     private readonly queueMailService: QueueMailService,
     private readonly configService: ConfigService,
@@ -52,8 +48,13 @@ export class AuthService {
   ) {}
 
   // ********** GENERAL USER ********
-  // sign up user
-  async signupLocal(dto: AuthDto): Promise<any> {
+  //  create user by admin
+  async createUser(dto: AuthDto, userPayload: UserInterface): Promise<any> {
+    if (decrypt(userPayload.hashType) != UserTypesEnum.ADMIN) {
+      throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+    }
+    console.log(decrypt(userPayload.hashType), 'hhh');
+
     const dataCheck = await this.usersRepository.findOne({
       where: {
         email: dto.email,
@@ -65,11 +66,8 @@ export class AuthService {
       return `this mail is already exist!`;
     } else {
       const secPass = await this.configService.get('GENERATE_SECRET_CODE');
-      const otpData = await this.emailVerification(dto.email, dto.name);
-      dto['apiKey'] = uuidv4();
-      dto['otpCode'] = otpData.otpCode;
-      dto['otpExpiresAt'] = otpData.otpExpiresAt;
-      dto['status'] = StatusField.DRAFT;
+      dto['uniqueId'] = uuidv4();
+      dto['status'] = StatusField.ACTIVE;
       dto['createdType'] = dto.userType;
       dto.password =
         dto && dto.password && dto.password.length > 1
@@ -77,27 +75,12 @@ export class AuthService {
           : bcrypt.hashSync(secPass, 10);
 
       const insertData = await this.usersRepository.save(dto);
-      let tokens;
-      if (insertData) {
-        tokens = await this.getTokens({
-          id: insertData.id,
-          email: insertData.email,
-          hashType: encrypt(dto.userType),
-        });
-        await this.updateRtHashUser(
-          {
-            id: insertData.id,
-            email: insertData.email,
-          },
-          tokens.refresh_token,
-        );
-      }
-      return tokens;
+      return insertData;
     }
   }
 
-  // sign in
-  async signinLocal(loginDto: LoginDto): Promise<any> {
+  // sign in user
+  async signinUser(loginDto: LoginDto): Promise<any> {
     const userRegCheck = await this.usersRepository.findOne({
       where: {
         email: loginDto.email,
@@ -152,43 +135,43 @@ export class AuthService {
   }
 
   // sign in for self user
-  async signinSelf(loginDto: LoginDto): Promise<any> {
-    const user = await this.usersRepository.findOne({
-      where: {
-        email: loginDto.email,
-        status: StatusField.ACTIVE,
-        userType: loginDto.userType,
-      },
-    });
+  // async signinSelf(loginDto: LoginDto): Promise<any> {
+  //   const user = await this.usersRepository.findOne({
+  //     where: {
+  //       email: loginDto.email,
+  //       status: StatusField.ACTIVE,
+  //       userType: loginDto.userType,
+  //     },
+  //   });
 
-    if (!user) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
+  //   if (!user) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
 
-    const passwordMatches = user.password === loginDto.password;
-    if (!passwordMatches) throw new ForbiddenException('Invalid password!');
+  //   const passwordMatches = user.password === loginDto.password;
+  //   if (!passwordMatches) throw new ForbiddenException('Invalid password!');
 
-    const tokens = await this.getTokens({
-      id: user.id,
-      email: user.email,
-      hashType: encrypt(loginDto.userType),
-    });
-    await this.updateRtHashUser({ id: user.id }, tokens.refresh_token);
+  //   const tokens = await this.getTokens({
+  //     id: user.id,
+  //     email: user.email,
+  //     hashType: encrypt(loginDto.userType),
+  //   });
+  //   await this.updateRtHashUser({ id: user.id }, tokens.refresh_token);
 
-    if (tokens) {
-      // const mainImage = `../../../assets/png-file/logo.png`;
-      const mailData = new QueueMailDto();
-      mailData.toMail = user.email;
-      mailData.subject = `RB: Login Message`;
-      mailData.bodyHTML = `Test Message`;
+  //   if (tokens) {
+  //     // const mainImage = `../../../assets/png-file/logo.png`;
+  //     const mailData = new QueueMailDto();
+  //     mailData.toMail = user.email;
+  //     mailData.subject = `RB: Login Message`;
+  //     mailData.bodyHTML = `Test Message`;
 
-      // mailData.template = './login';
+  //     // mailData.template = './login';
 
-      // mailData.context = {
-      //   imgSrc: mainImage,
-      // };
-      const test = await this.queueMailService.sendMail(mailData);
-    }
-    return tokens;
-  }
+  //     // mailData.context = {
+  //     //   imgSrc: mainImage,
+  //     // };
+  //     const test = await this.queueMailService.sendMail(mailData);
+  //   }
+  //   return tokens;
+  // }
 
   // get user by id
   async findUserById(userPayload: UserInterface) {
@@ -198,27 +181,12 @@ export class AuthService {
     if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
     delete data.password;
     delete data.hashedRt;
-    delete data.otpCode;
-    delete data.otpExpiresAt;
     return data;
   }
   // get user by uniqueid
   async findUserByUId(uniqueId: string) {
     const data = await this.usersRepository.findOne({
-      where: { apiKey: uniqueId },
-    });
-    if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
-    delete data.password;
-    delete data.hashedRt;
-    delete data.otpCode;
-    delete data.otpExpiresAt;
-    return data;
-  }
-
-  // get single system user
-  async findSingleSystemUser(userPayload: UserInterface) {
-    const data = await this.sytemUserRepository.findOne({
-      where: { id: userPayload.id },
+      where: { uniqueId: uniqueId },
     });
     if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
     delete data.password;
@@ -234,103 +202,7 @@ export class AuthService {
     if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
     delete data.password;
     delete data.hashedRt;
-    delete data.otpCode;
-    delete data.otpExpiresAt;
     return data;
-  }
-
-  //verify otp data
-  async verifyOtp(otpDataDto: OtpVerifyDto) {
-    const data = await this.usersRepository.findOne({
-      where: {
-        otpCode: otpDataDto.otpCode,
-      },
-    });
-
-    //if data is empty
-    if (!data) {
-      throw new ForbiddenException('Invalid code or expired!');
-    }
-
-    if (checkIsSameOrAfterNowDateTime(data.otpExpiresAt) === true) {
-      throw new ForbiddenException(
-        'OTP code expired.Please request a new One!',
-      );
-    }
-    const updateData = {
-      otpCode: null,
-      otpExpiresAt: null,
-      status: StatusField.ACTIVE,
-    };
-
-    //update the otp fields
-    if (data) {
-      await this.usersRepository.update({ id: data.id }, updateData);
-    }
-
-    return {
-      message: `${data.email} verified successfully.Please login to continue!`,
-    };
-  }
-
-  //resend otp code
-  async resendOtp(resendOtpDto: ResendOtpDto) {
-    //create  otp data
-    const emailOtp = crypto.randomBytes(3).toString('hex').toUpperCase();
-
-    const currentDate = new Date();
-    const otpExpiresAt = new Date(currentDate);
-    otpExpiresAt.setHours(
-      otpExpiresAt.getHours() +
-        Number(this.configService.get('OTP_EXPIRATION')),
-    );
-    const otpData = {};
-    otpData['otpCode'] = emailOtp;
-    otpData['otpExpiresAt'] = otpExpiresAt;
-    //check for existing draft user by email
-    const checkExisting = await this.usersRepository.findOne({
-      where: {
-        email: resendOtpDto.email,
-        status: StatusField.DRAFT,
-      },
-    });
-    //insert if the user is new
-    if (!checkExisting) {
-      throw new ForbiddenException('No user found!');
-    } else {
-      //update the if the user exist in the system but draft
-      await this.usersRepository.update({ id: checkExisting.id }, otpData);
-    }
-
-    const userDataReg = {
-      name: checkExisting.name,
-      email: checkExisting.email,
-    };
-    //send email
-    const mailData = new QueueMailDto();
-    // const verificationLink = `${
-    //   this.configService.get('APP_ENV') === 'development'
-    //     ? this.configService.get('DEV_FRONTEND_DOMAIN')
-    //     : this.configService.get('PROD_FRONTEND_DOMAIN')
-    // }email-verification?type=${resendOtpDto.userTypeSlug}&email=${
-    //   resendOtpDto.email
-    // }`;
-    // const cdnLink = await this.configService.get('PUBLIC_CDN');
-    const mainImage = `../../../assets/png-file/logo.png`;
-    mailData.toMail = userDataReg.email;
-    mailData.subject = `RB: Email Verification Code`;
-    mailData.template = `./verification`;
-    mailData.context = {
-      name: `${userDataReg.name}`,
-      code: emailOtp,
-      //   verificationLink: verificationLink,
-      imgSrc: mainImage,
-    };
-
-    //send email
-    await this.queueMailService.sendMail(mailData);
-
-    return `Please check your email at ${resendOtpDto.email}`;
   }
 
   // update refresh token of user
@@ -411,7 +283,7 @@ export class AuthService {
       mailData.subject = `Reset password instructions for RB account`;
       mailData.template = './forgot-password';
       mailData.context = {
-        name: `${userData.name}`,
+        name: `${userData.fullName}`,
         resetLink: paswordResetLink,
         imgSrc: mainImage,
       };
@@ -573,7 +445,11 @@ export class AuthService {
   }
 
   // update user
-  async updateUserProfile(updateUserDto: any, userPayload: UserInterface) {
+  async updateUserProfile(
+    updateUserDto: any,
+    userPayload: UserInterface,
+    id: number,
+  ) {
     updateUserDto['updatedAt'] = new Date();
     updateUserDto['updatedBy'] = userPayload.id;
 
@@ -592,7 +468,7 @@ export class AuthService {
     const data = await this.usersRepository
       .createQueryBuilder()
       .update(UserEntity, updateUserDto)
-      .where(`id = '${userPayload.id}'`)
+      .where(`id = '${id}'`)
       .execute();
 
     if (data.affected === 0) {
@@ -640,9 +516,7 @@ export class AuthService {
       .skip(page > 0 ? page * limit - limit : page)
       .getManyAndCount();
 
-    let results = result.map(
-      ({ otpCode, password, otpExpiresAt, hashedRt, ...item }) => item,
-    );
+    let results = result.map(({ password, hashedRt, ...item }) => item);
 
     return new Pagination<any>({
       results,
@@ -686,41 +560,6 @@ export class AuthService {
     };
   }
 
-  async emailVerification(email: string, name: string) {
-    const emailOtp = crypto.randomBytes(3).toString('hex').toUpperCase();
-
-    const otpExpiresAt = AddHoursIntoDateTime(
-      this.configService.get('OTP_EXPIRATION') ?? 2,
-    );
-
-    const mailData = new QueueMailDto();
-    // const verificationLink = `${
-    //   this.configService.get('APP_ENV') === 'development'
-    //     ? this.configService.get('DEV_FRONTEND_DOMAIN')
-    //     : this.configService.get('PROD_FRONTEND_DOMAIN')
-    // }email-verification?type=${userDataReg.userTypeSlug}&email=${
-    //   userDataReg.email
-    // }`;
-    // const cdnLink = await this.configService.get('PUBLIC_CDN');
-    const mainImage = `../../../assets/png-file/logo.png`;
-    mailData.toMail = email;
-    mailData.subject = `RB: Email Verification Code`;
-    mailData.template = `./verification`;
-    mailData.context = {
-      name: name,
-      code: emailOtp,
-      //   verificationLink: verificationLink,
-      imgSrc: mainImage,
-    };
-    //send email
-    await this.queueMailService.sendMail(mailData);
-
-    return {
-      otpCode: emailOtp,
-      otpExpiresAt: otpExpiresAt,
-    };
-  }
-
   // *******For ADMIN USER******
 
   // update admin
@@ -756,7 +595,10 @@ export class AuthService {
 
   // sign up admin
   async signupAdmin(dto: AuthDto): Promise<any> {
-    const dataCheck = await this.sytemUserRepository.findOne({
+    if (dto.userType != UserTypesEnum.ADMIN) {
+      throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+    }
+    const dataCheck = await this.usersRepository.findOne({
       where: {
         email: dto.email,
       },
@@ -767,12 +609,13 @@ export class AuthService {
     } else {
       const secPass = await this.configService.get('GENERATE_SECRET_CODE');
       dto['status'] = StatusField.ACTIVE;
+      dto['uniqueId'] = uuidv4();
       dto.password =
         dto && dto.password && dto.password.length > 1
           ? bcrypt.hashSync(dto.password, 10)
           : bcrypt.hashSync(secPass, 10);
 
-      const insertData = await this.sytemUserRepository.save(dto);
+      const insertData = await this.usersRepository.save(dto);
       let tokens;
       if (insertData) {
         tokens = await this.getTokens({
@@ -792,62 +635,9 @@ export class AuthService {
     }
   }
 
-  // sign in admin
-  async signinAdmin(loginDto: LoginDto): Promise<any> {
-    const systemUser = await this.sytemUserRepository.findOne({
-      where: {
-        email: loginDto.email,
-        status: StatusField.ACTIVE,
-      },
-    });
-
-    if (!systemUser) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
-
-    const passwordMatches = await bcrypt.compare(
-      loginDto.password,
-      systemUser.password,
-    );
-    if (!passwordMatches) throw new ForbiddenException('Invalid password!');
-
-    const tokens = await this.getTokens({
-      id: systemUser.id,
-      email: systemUser.email,
-      hashType: encrypt(UserTypesEnum.ADMIN),
-    });
-    await this.updateRtHashAdmin({ id: systemUser.id }, tokens.refresh_token);
-
-    if (tokens) {
-      const mainImage = `../../../assets/png-file/logo.png`;
-      const mailData = new QueueMailDto();
-      mailData.toMail = systemUser.email;
-      mailData.subject = `RB: Login To Admin`;
-
-      mailData.template = './login';
-
-      mailData.context = {
-        imgSrc: mainImage,
-      };
-      const test = await this.queueMailService.sendMail(mailData);
-    }
-    return tokens;
-  }
-
-  // logout admin
-  async logoutAdmin(userPayload: UserInterface) {
-    const updatedData = {
-      hashedRt: null,
-    };
-    const isUpdated = await this.sytemUserRepository.update(
-      { id: userPayload.id },
-      updatedData,
-    );
-
-    return isUpdated ? true : false;
-  }
-
-  // token refresh admin
-  async refreshTokensAdmin(userId: number, rt: string): Promise<any> {
-    const systemUser = await this.sytemUserRepository.findOne({
+  // token refresh user
+  async refreshTokensUser(userId: number, rt: string): Promise<any> {
+    const systemUser = await this.usersRepository.findOne({
       where: { id: userId },
     });
 
@@ -868,78 +658,12 @@ export class AuthService {
     return tokens;
   }
 
-  // update refresh token of admin
+  // update refresh token of user
   async updateRtHashAdmin(userPayload: any, rt: string) {
     const hash = await bcrypt.hash(rt, 10);
     const updatedData = {
       hashedRt: hash,
     };
-    await this.sytemUserRepository.update({ id: userPayload.id }, updatedData);
-  }
-
-  // login to client from user
-  async clientLoginFromUser(id: number, userPayload: UserInterface) {
-    if (decrypt(userPayload.hashType) !== UserTypesEnum.USER) {
-      throw new BadRequestException('You are not allow to access this api');
-    }
-
-    const clinetData = await this.usersRepository.findOne({
-      where: {
-        id: id,
-        userType: UserTypesEnum.CLIENT,
-        status: 'Active',
-      },
-    });
-
-    const localLoginDto = {
-      email: clinetData.email,
-      password: clinetData.password,
-      userType: UserTypesEnum.CLIENT,
-    };
-
-    const loginToClient = await this.signinSelf(localLoginDto);
-    return loginToClient;
-  }
-
-  // login to user from client
-  async userLoginFromClient(id: number, userPayload: UserInterface) {
-    if (decrypt(userPayload.hashType) !== UserTypesEnum.CLIENT) {
-      throw new BadRequestException('You are not allow to access this api');
-    }
-
-    const userData = await this.usersRepository.findOne({
-      where: {
-        id: id,
-        userType: UserTypesEnum.USER,
-        status: 'Active',
-      },
-    });
-
-    const localLoginDto = {
-      email: userData.email,
-      password: userData.password,
-      userType: UserTypesEnum.USER,
-    };
-
-    const loginToClient = await this.signinSelf(localLoginDto);
-    return loginToClient;
-  }
-
-  //  facebook login
-  async facebookLogin(req: any) {
-    return req.user;
-
-    // if (!req.user) {
-    //   return `no user from google`;
-    // }
-    // return {
-    //   message: 'user info from google',
-    //   user: req,
-    // };
-  }
-
-  // google login
-  async googleLogin(req: any, res: Response) {
-    return req.user;
+    await this.usersRepository.update({ id: userPayload.id }, updatedData);
   }
 }

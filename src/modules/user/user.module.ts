@@ -2,21 +2,16 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/authentication/auth/auth.module';
-import { AdminModule } from '../admin/admin.module';
 import { QueueMailModule } from '../queue-mail/queue-mail.module';
-import { UserEntity } from './entities';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { UserEntity } from './entities';
 /**controllers */
-/**services */
 /**Authentication strategies */
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      UserEntity,
-    ]),
+    TypeOrmModule.forFeature([UserEntity]),
     QueueMailModule,
-    AdminModule,
     forwardRef(() => AuthModule),
   ],
   controllers: [UserController],

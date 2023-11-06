@@ -3,9 +3,6 @@ import { AppService } from './app.service';
 import { Injectable, Res } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
-import { Request } from 'express';
-import { AtGuard } from './authentication/auth/guards';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
 export class AppController {

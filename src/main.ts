@@ -20,7 +20,6 @@ import {
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './authentication/common/http/filter';
 import { GlobalResponseInterceptor } from './authentication/common/http/response';
-// import { GlobalResponseInterceptor } from './monitrix-auth/common/http/response';
 
 const SWAGGER_ENVS = ['development', 'local'];
 
@@ -159,10 +158,10 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Demo')
-    .setDescription('Demo Backend API')
+    .setTitle('Accounting')
+    .setDescription('Accounting Backend API')
     .setVersion('1.0')
-    .setLicense('Demo', 'https://Demo.com/')
+    .setLicense('Accounting', 'https://accounting.com/')
     .addBearerAuth(
       {
         type: 'http',
@@ -181,10 +180,10 @@ async function bootstrap() {
   //global response interceptor
   app.useGlobalInterceptors(new GlobalResponseInterceptor());
   //global exception filter for DB/HTTP
-  app.useGlobalFilters(new GlobalExceptionFilter());
+  // app.useGlobalFilters(new GlobalExceptionFilter());
 
   //configure app port
-  const app_port = parseInt(process.env.APP_PORT) || 7000;
+  const app_port = parseInt(process.env.APP_PORT) || 4000;
   //start app server
   await app.listen(app_port);
   //log application startup

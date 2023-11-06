@@ -1,127 +1,138 @@
+/**dependencies */
 import {
   Body,
   Controller,
-  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  UseGuards,
   Param,
   Patch,
-  Post,
-  UseGuards
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
-  ApiParam,
-  ApiTags
+  ApiQuery,
+  ApiTags,
 } from '@nestjs/swagger';
 import { AuthService } from 'src/authentication/auth/auth.service';
-import {
-  AuthDto,
-  ChangeForgotPassDto,
-  ForgotPassDto,
-  LoginDto,
-  OtpVerifyDto,
-  ResendOtpDto,
-} from 'src/authentication/auth/dto';
+import { AuthDto, LoginDto } from 'src/authentication/auth/dto';
 import { UpdateUserDto } from 'src/authentication/auth/dto/update-user.dto';
-import { AtGuard, RtGuard } from 'src/authentication/auth/guards';
-import { UserTypesEnum } from 'src/authentication/common/enum';
+import { UserGuard } from 'src/authentication/auth/guards';
+import { RtGuard } from 'src/authentication/auth/guards/rt.guard';
 import {
-  UserInterface
+  PaginationOptionsInterface,
+  UserInterface,
 } from 'src/authentication/common/interfaces';
 import { PublicRoute, UserPayload } from 'src/authentication/utils/decorators';
 
-//swagger doc
-@ApiTags('User')
-//guards
-// @ApiBearerAuth('jwt')
-// @UseGuards(JwtAuthGuard)
+//guard
+@ApiTags('ADMIN')
 @Controller({
   //path name
-  path: 'user',
-  //route version
+  path: '',
+  //version
   version: '1',
 })
 export class UserController {
   constructor(
-    private readonly authService: AuthService,
-
+    private readonly authService: AuthService, // private readonly userService: UserService,
   ) {}
 
-  // user registration
+  // signup route
   @PublicRoute()
-  @Post('local/signup')
-  async signupLocal(@Body() authDto: AuthDto) {
-    const data = await this.authService.signupLocal(authDto);
+  @ApiOperation({
+    summary: 'registration a system user',
+    description: 'this route is responsible for register a system user',
+  })
+  @ApiBody({
+    type: AuthDto,
+    description:
+      'How to register a system user with body?... here is the example given below!',
+    examples: {
+      a: {
+        summary: 'default',
+        value: {
+          name: 'rahan',
+          email: 'rahan@gmail.com',
+          mobile: '+8801718890326',
+          address: 'syedpur',
+          password: '123456',
+        } as unknown as AuthDto,
+      },
+    },
+  })
+  @Post('signup')
+  @HttpCode(HttpStatus.CREATED)
+  async signupLocal(@Body() dto: AuthDto) {
+    const data = await this.authService.signupAdmin(dto);
 
     return { message: 'Successful', result: data };
   }
 
-  //verify otp data
+  // user registration
+  @UseGuards(UserGuard)
   @ApiOperation({
-    summary: 'verify email otp code',
-    description:
-      'this route is responsible for verifying email OTP code that is sent to user',
+    summary: 'create a user',
+    description: 'this route is responsible for create user',
   })
   @ApiBody({
-    type: OtpVerifyDto,
+    type: AuthDto,
     description:
-      'How to verify email otp code with body?... here is the example given below!',
+      'How to create user with body?... here is the example given below!',
     examples: {
       a: {
         summary: 'default',
         value: {
-          otpCode: '35FF0C',
-          userTypeSlug: UserTypesEnum.USER,
-        } as unknown as OtpVerifyDto,
+          name: 'Md Noman',
+          mobile: '085454534',
+          gender: 'male',
+          email: 'user@gmail.com',
+          password: 'password',
+          userType: 'user',
+        } as unknown as AuthDto,
       },
     },
   })
-  @Post('verify/otp')
-  async verifyOtp(@Body() otpDataDto: OtpVerifyDto) {
-    const data = await this.authService.verifyOtp(otpDataDto);
-    return { message: 'successful', result: data };
+  @Post('create')
+  async create(
+    @Body() authDto: AuthDto,
+    @UserPayload() userPayload: UserInterface,
+  ) {
+    const data = await this.authService.createUser(authDto, userPayload);
+
+    return { message: 'Successful', result: data };
   }
 
-  //resend otp code
+  // signin route
+
+  @PublicRoute()
   @ApiOperation({
-    summary: 'resend user otp code',
-    description: 'this route is responsible for resend otp code',
+    summary: 'for login, use this api',
+    description: 'this route is responsible for login a system user',
   })
   @ApiBody({
-    type: ResendOtpDto,
+    type: LoginDto,
     description:
-      'How to resend otp code with body?... here is the example given below!',
+      'How to login as an admin with body?... here is the example given below!',
     examples: {
       a: {
         summary: 'default',
         value: {
-          email: 'noman@gmail.com',
-          userTypeSlug: 'user',
-        } as unknown as ResendOtpDto,
+          email: 'rahan@gmail.com',
+          password: '123456',
+          userType: 'admin',
+        } as unknown as LoginDto,
       },
     },
   })
-  @Post('resend/otp-code')
-  async resendOtp(@Body() resendOtpDto: ResendOtpDto) {
-    const data = await this.authService.resendOtp(resendOtpDto);
-    return { message: 'successful', result: data };
-  }
-
   @PublicRoute()
   @Post('local/signin')
   async signinLocal(@Body() dto: LoginDto): Promise<any> {
-    const data = await this.authService.signinLocal(dto);
-    return { message: 'Successful', result: data };
-  }
-
-  @ApiBearerAuth('jwt')
-  @UseGuards(AtGuard)
-  @Get()
-  async getUser(@UserPayload() user: UserInterface) {
-    const data = await this.authService.findUserById(user);
-
+    const data = await this.authService.signinUser(dto);
     return { message: 'Successful', result: data };
   }
 
@@ -129,11 +140,11 @@ export class UserController {
    *  UPDATE USER Profile
    */
   @ApiBearerAuth('jwt')
-  @UseGuards(AtGuard)
-  @Patch()
+  @UseGuards(UseGuards)
+  @Patch(':id')
   @ApiOperation({
-    summary: 'Update a SUBSCRIBER User data',
-    description: 'This route is responsible for updating a SUBSCRIBER User',
+    summary: 'Update a User data',
+    description: 'This route is responsible for updating a User',
   })
   @ApiBody({
     type: UpdateUserDto,
@@ -143,12 +154,12 @@ export class UserController {
       a: {
         summary: 'default',
         value: {
-          name: 'string',
-          mobile: 'string',
-          gender: 'female',
-          maritalStatus: 'married',
-          birthDate: '2022-03-02',
-          address: 'string',
+          name: 'Md Noman',
+          mobile: '085454534',
+          gender: 'male',
+          email: 'user@gmail.com',
+          password: 'password',
+          userType: 'user',
         } as unknown as UpdateUserDto,
       },
     },
@@ -156,126 +167,13 @@ export class UserController {
   async updateUser(
     @Body() updateUserDto: UpdateUserDto,
     @UserPayload() userPayload: UserInterface,
+    @Param('id') id: number,
   ) {
     const data = await this.authService.updateUserProfile(
       updateUserDto,
       userPayload,
+      id,
     );
-    return { message: 'Successful', result: data };
-  }
-
-  // delete user
-  @ApiBearerAuth('jwt')
-  @UseGuards(AtGuard)
-  @Delete()
-  async delete(@UserPayload() user: UserInterface) {
-    const data = await this.authService.deleteUser(user);
-
-    return { message: 'Successful', result: data };
-  }
-
-  // // change password
-  // @ApiBearerAuth('jwt')
-  // @ApiOperation({
-  //   summary: 'change authenticated users password',
-  //   description:
-  //     'this route is responsible for changing password for all type of users',
-  // })
-  // @ApiBody({
-  //   type: ChangePasswordDto,
-  //   description:
-  //     'How to change password with body?... here is the example given below!',
-  //   examples: {
-  //     a: {
-  //       summary: 'default',
-  //       value: {
-  //         oldPassword: '123456',
-  //         password: '123456',
-  //         passwordConfirm: '123456',
-  //       } as unknown as ChangePasswordDto,
-  //     },
-  //   },
-  // })
-  // @UseGuards(AtGuard)
-  // @Post('change-password')
-  // async changePassword(
-  //   @Body() changePasswordData: ChangePasswordDto,
-  //   @UserPayload() userPayload: UserInterface,
-  // ) {
-  //   const data = await this.userService.passwordChanged(
-  //     changePasswordData,
-  //     userPayload,
-  //   );
-
-  //   return { message: 'Successful', result: data };
-  // }
-
-  //forgot password route
-  @PublicRoute()
-  @ApiOperation({
-    summary: 'request for forgot password',
-    description: 'this route is responsible for requsiting for forgot password',
-  })
-  @ApiBody({
-    type: ForgotPassDto,
-    description:
-      'How to forgot password with body?... here is the example given below!',
-    examples: {
-      a: {
-        summary: 'default',
-        value: {
-          email: 'noman@gmail.com',
-        } as unknown as ForgotPassDto,
-      },
-    },
-  })
-  @Post('forgot-password')
-  async forgotPassword(@Body() forgotPassDto: ForgotPassDto) {
-    const data = await this.authService.forgotPass(forgotPassDto);
-
-    return { message: 'successful', result: data };
-  }
-
-  //change password through forgotpass
-  @PublicRoute()
-  @ApiOperation({
-    summary: 'change password by forgot pass',
-    description:
-      'this route is responsible to change password that requested by forgot password',
-  })
-  @ApiBody({
-    type: ChangeForgotPassDto,
-    description:
-      'How to change password by forgot pass with body?... here is the example given below!',
-    examples: {
-      a: {
-        summary: 'default',
-        value: {
-          passResetToken: '2vAzIwDFKn9mV12Ejod9',
-          password: '123456',
-          passwordConfirm: '123456',
-        } as unknown as ChangeForgotPassDto,
-      },
-    },
-  })
-  @Post('change/password')
-  async changeForgotPassword(@Body() changeForgotPassDto: ChangeForgotPassDto) {
-    const data =
-      await this.authService.changePasswordByForgotPass(changeForgotPassDto);
-    return { message: 'successful', result: data };
-  }
-
-  // logout api
-  @ApiBearerAuth('jwt')
-  @UseGuards(AtGuard)
-  @ApiOperation({
-    summary: 'for logout, use this api',
-    description: 'this route is responsible for logout from an subscriber user',
-  })
-  @Post('logout')
-  async logout(@UserPayload() user: UserInterface) {
-    const data = await this.authService.logout(user);
-
     return { message: 'Successful', result: data };
   }
 
@@ -288,70 +186,245 @@ export class UserController {
   })
   @UseGuards(RtGuard)
   @Post('refresh')
+  @HttpCode(HttpStatus.OK)
   async refreshTokens(
-    @UserPayload() userPayload: any,
+    @UserPayload() user: UserInterface,
     @UserPayload('refreshToken') refreshToken: string,
   ): Promise<any> {
-    const data = await this.authService.updateRtHashUser(
-      userPayload.id,
+    const data = await this.authService.refreshTokensUser(
+      user.id,
       refreshToken,
     );
 
     return { message: 'Successful', result: data };
   }
 
-  /**
-   * from user login to client
-   */
+  // pagination all user data
   @ApiOperation({
-    summary: 'client login from user',
-    description:
-      'This route is responsible for getting token and login to client from user',
+    summary: 'pagination of all user data',
+    description: 'this route is responsible for pagination of all user data',
   })
-  @ApiParam({
-    name: 'clientId',
+  @ApiQuery({
+    name: 'limit',
     type: Number,
-    description: 'for getting access token of a client required clientId',
-    required: true,
+    description: 'insert limit if you need',
+    required: false,
   })
-  @UseGuards(AtGuard)
-  @Get('login/client/:clientId')
-  async loginToClient(
-    @Param('clientId') clientId: number,
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    description: 'insert page if you need',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'filter',
+    type: String,
+    description: 'insert filter if you need',
+    required: false,
+  })
+  @Get('all/user')
+  @UseGuards(UserGuard)
+  async allUser(
+    @Query() listQueryParam: PaginationOptionsInterface,
+    @Query('filter') filter: any,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const data = await this.authService.clientLoginFromUser(
-      clientId,
+    const result = await this.authService.findAllUser(
+      listQueryParam,
+      filter,
       userPayload,
     );
-    return { message: 'Successful', result: data };
+
+    return { message: 'successful', result: result };
   }
 
-  /**
-   * from client login to user
-   */
-  @ApiOperation({
-    summary: 'user login from client',
-    description:
-      'This route is responsible for getting token and login to user from client',
-  })
-  @ApiParam({
-    name: 'userId',
-    type: Number,
-    description: 'for getting access token of a client required userId',
-    required: true,
-  })
-  @UseGuards(AtGuard)
-  @Get('login/user/:userId')
-  async loginToUser(
-    @Param('userId') userId: number,
-    @UserPayload() userPayload: UserInterface,
-  ) {
-    const data = await this.authService.userLoginFromClient(
-      userId,
-      userPayload,
-    );
-    return { message: 'Successful', result: data };
-  }
+  // // show all user data
+  // @ApiBearerAuth('jwt')
+  // @ApiOperation({
+  //   summary: 'show all user data',
+  //   description:
+  //     'this route is responsible for showing paginated all user data',
+  // })
+  // @ApiQuery({
+  //   name: 'limit',
+  //   type: Number,
+  //   description: 'insert limit if you need',
+  //   required: false,
+  // })
+  // @ApiQuery({
+  //   name: 'page',
+  //   type: Number,
+  //   description: 'insert page if you need',
+  //   required: false,
+  // })
+  // @ApiQuery({
+  //   name: 'filter',
+  //   type: String,
+  //   description: 'insert filter if you need',
+  //   required: false,
+  // })
+  // @UseGuards(AdminGuard)
+  // @Get('/all/user')
+  // async getAllUserData(
+  //   @Query() listQueryParam: PaginationOptionsInterface,
+  //   @UserPayload() userPayload: UserInterface,
+  //   @Query('filter') filter: any,
+  // ) {
+  //   const data = await this.subscriberUserService.showAllUser(
+  //     listQueryParam,
+  //     userPayload,
+  //     filter,
+  //   );
+  //   return {
+  //     message: 'successful!',
+  //     result: data,
+  //   };
+  // }
 
+  // // change status of user
+  // @ApiBearerAuth('jwt')
+  // @UseGuards(AdminGuard)
+  // @Patch('/change/status/user')
+  // @ApiOperation({
+  //   summary: 'Status change one or more user',
+  // })
+  // @ApiBody({
+  //   type: ChangeStatusDto,
+  //   examples: {
+  //     a: {
+  //       summary: 'default',
+  //       description: ' Status change one or more user',
+  //       value: {
+  //         ids: [1],
+  //         status: 'Active || Inactive || Draft || Deleted || Banned',
+  //       } as unknown as ChangeStatusDto,
+  //     },
+  //   },
+  // })
+  // async changeStatus(
+  //   @Body() changeStatusDto: ChangeStatusDto,
+  //   @UserPayload() userPayload: UserInterface,
+  // ) {
+  //   const data = await this.subscriberUserService.userStatusChange(
+  //     changeStatusDto,
+  //     userPayload,
+  //   );
+
+  //   return { message: 'Successful', result: data };
+  // }
+
+  // // for getting login to user from admin
+  // @ApiOperation({
+  //   summary: 'login to user from admin',
+  //   description: 'this route is responsible for login to user from admin',
+  // })
+  // @ApiParam({
+  //   name: 'id',
+  //   type: Number,
+  //   description: 'for login to user require user id',
+  //   required: true,
+  // })
+  // @ApiBearerAuth('jwt')
+  // @UseGuards(AdminGuard)
+  // @Get('login-user/:id')
+  // async getToken(
+  //   @Param('id') id: number,
+  //   @UserPayload() userPayload: UserInterface,
+  //   @IpPlusClientAddress() ipClientPayload: IpClientInterface,
+  // ) {
+  //   const data = await this.subscriberUserService.loginToUserFromAdmin(
+  //     id,
+  //     userPayload,
+  //     ipClientPayload,
+  //   );
+
+  //   return {
+  //     message: 'successful!',
+  //     result: data,
+  //   };
+  // }
+
+  // // user banned by admin
+
+  // // @ApiOperation({
+  // //   summary: 'for status changing of a subscriber user use this api',
+  // //   description:
+  // //     'this route is responsible for status changing of a subscriber user',
+  // // })
+  // // @ApiBearerAuth('jwt')
+  // // @ApiBody({
+  // //   type: UserBannedDto,
+  // //   description:
+  // //     'How to change status of a subscriber user with body?... here is the example given below!',
+  // //   examples: {
+  // //     a: {
+  // //       summary: 'chaging status',
+  // //       value: {
+  // //         status: 'Banned',
+  // //       } as unknown as UserBannedDto,
+  // //     },
+  // //   },
+  // // })
+  // // @ApiParam({
+  // //   name: 'id',
+  // //   type: Number,
+  // //   description: 'for banned user required user id',
+  // //   required: true,
+  // // })
+  // // @UseGuards(AdminGuard)
+  // // @Patch('banned-user/:id')
+  // // async bannedUser(
+  // //   @Param('id') id: number,
+  // //   @Body() userBannedDto: UserBannedDto,
+  // //   @UserPayload() userPayload: UserInterface,
+  // //   @IpPlusClientAddress() ipClientPayload: IpClientInterface,
+  // // ) {
+  // //   const data = await this.subscriberUserService.bannedUserByAdmin(
+  // //     id,
+  // //     userBannedDto,
+  // //     userPayload,
+  // //     ipClientPayload,
+  // //   );
+
+  // //   return { message: 'successful!', result: data };
+  // // }
+
+  // /**
+  //  *  UPDATE SUBSCRIBER USER Profile
+  //  */
+  // @ApiBearerAuth('jwt')
+  // @UseGuards(AdminGuard)
+  // @Patch()
+  // @ApiOperation({
+  //   summary: 'Update single admin',
+  //   description: 'This route is responsible for updating single admin',
+  // })
+  // @ApiBody({
+  //   type: UpdateUserDto,
+  //   description:
+  //     'How to update admin with body?... here is the example given below!',
+  //   examples: {
+  //     a: {
+  //       summary: 'default',
+  //       value: {
+  //         name: 'string',
+  //         mobile: 'string',
+  //         gender: 'female',
+  //         maritalStatus: 'married',
+  //         birthDate: '2022-03-02',
+  //         address: 'string',
+  //       } as unknown as UpdateUserDto,
+  //     },
+  //   },
+  // })
+  // async updateAdmin(
+  //   @Body() updateUserDto: UpdateUserDto,
+  //   @UserPayload() userPayload: UserInterface,
+  // ) {
+  //   const data = await this.authService.updateAdminProfile(
+  //     updateUserDto,
+  //     userPayload,
+  //   );
+  //   return { message: 'Successful', result: data };
+  // }
 }

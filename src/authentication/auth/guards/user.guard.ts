@@ -7,7 +7,7 @@ import { IS_PUBLIC_KEY } from 'src/authentication/utils/decorators';
 import { decrypt } from 'src/helper/crypto.helper';
 
 @Injectable()
-export class AdminGuard extends AuthGuard('jwt') {
+export class UserGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
     super();
   }
@@ -24,19 +24,15 @@ export class AdminGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  // handle request for admin
+  // handle request
   handleRequest(err: any, user: any) {
-    if (err) {
-      throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
-    }
     // You can throw an exception based on either "info" or "err" arguments
-    if (!user) {
+    if (err || !user) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
-
-    if (decrypt(user.hashType) != UserTypesEnum.ADMIN) {
-      throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
-    }
+    // if (decrypt(user.hashType) === UserTypesEnum.ADMIN) {
+    //   throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+    // }
     return user;
   }
 }

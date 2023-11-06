@@ -16,7 +16,7 @@ export class AuthDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  name: string;
+  fullName: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -31,22 +31,7 @@ export class AuthDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  address: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsEnum(UserTypesEnum)
-  userType: UserTypesEnum;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsNumber()
-  profileImageId: number;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsDateString()
-  birthDate: string;
+  userType: string;
 
   @ApiProperty()
   @IsNotEmpty()

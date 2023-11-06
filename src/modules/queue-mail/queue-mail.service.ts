@@ -5,7 +5,7 @@ import { QueueMailDto } from './queue-mail.dto';
 
 @Injectable()
 export class QueueMailService {
-  constructor(@InjectQueue('demo') private queue: Queue) {}
+  constructor(@InjectQueue('accounting_mail') private queue: Queue) {}
 
   async sendMail(data: QueueMailDto) {
     await this.queue.add('mail-job', data, { delay: 2000 });

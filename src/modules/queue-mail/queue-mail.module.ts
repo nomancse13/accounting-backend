@@ -30,7 +30,7 @@ import { MailerModule } from '@nestjs-modules/mailer/dist';
                 },
               },
         defaults: {
-          from: `"Demo" <${config.get('MAIL_FROM')}>`,
+          from: `"Accounting Mail" <${config.get('MAIL_FROM')}>`,
         },
         preview: false,
 
@@ -46,7 +46,7 @@ import { MailerModule } from '@nestjs-modules/mailer/dist';
     }),
 
     BullModule.registerQueueAsync({
-      name: 'demo', // mail queue name
+      name: 'accounting_mail', // mail queue name
     }),
   ],
   providers: [QueueMailService],

@@ -11,7 +11,7 @@ import { Job } from 'bull';
 import { QueueMailDto } from './queue-mail.dto';
 import { AppLogger } from 'src/authentication/logger/app-logger.service';
 
-@Processor('demo-mail')
+@Processor('accounting_mail')
 export class QueueMailConsumer {
   private readonly _logger = new Logger(QueueMailConsumer.name);
   constructor(
@@ -38,7 +38,7 @@ export class QueueMailConsumer {
   }
 
   @Process('mail-job')
-  async readOperationJob(job: Job<QueueMailDto>) {    
+  async readOperationJob(job: Job<QueueMailDto>) {
     if (job.data.template) {
       const overrideContext = job.data.context;
       overrideContext.CDN_LINK = process.env.PUBLIC_CDN;
@@ -60,7 +60,7 @@ export class QueueMailConsumer {
           this.appLogger.log(err);
           return false;
         });
-    } else {            
+    } else {
       this.mailerService
         .sendMail({
           to: job.data.toMail,
