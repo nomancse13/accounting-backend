@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { CommonEntity } from 'src/authentication/common';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from './user.entity';
 
 @Entity()
 export class UserTypeEntity extends CommonEntity {
@@ -19,4 +20,7 @@ export class UserTypeEntity extends CommonEntity {
   @IsNotEmpty()
   @IsString()
   slug: string;
+
+  @OneToMany(() => UserEntity, (user) => user.userType)
+  users: UserEntity[];
 }

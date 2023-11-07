@@ -28,10 +28,10 @@ export class AuthDto {
   @IsString()
   gender: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  userType: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  userTypeId: number;
 
   @ApiProperty()
   @IsNotEmpty()

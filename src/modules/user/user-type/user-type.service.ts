@@ -30,7 +30,7 @@ export class UserTypeService {
    * CREATE new user Type
    */
   async create(userTypeData: CreateUserTypeDto, userPayload: UserInterface) {
-    if (decrypt(userPayload.hashType) != UserTypesEnum.ADMIN) {
+    if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
     userTypeData['slug'] = slugGenerator(userTypeData.slug);
@@ -48,7 +48,7 @@ export class UserTypeService {
    * GET all user type
    */
   async findAll(userPayload: UserInterface) {
-    if (decrypt(userPayload.hashType) != UserTypesEnum.ADMIN) {
+    if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
     const data = await this.userTypeRepository.find({
@@ -67,7 +67,7 @@ export class UserTypeService {
    * Get One user Type
    */
   async findOneResult(id: number, userPayload: UserInterface) {
-    if (decrypt(userPayload.hashType) != UserTypesEnum.ADMIN) {
+    if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
     const data = await this.userTypeRepository.findOne({
@@ -89,7 +89,7 @@ export class UserTypeService {
     userTypeData: UpdateUserTypeDto,
     userPayload: UserInterface,
   ) {
-    if (decrypt(userPayload.hashType) != UserTypesEnum.ADMIN) {
+    if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
     if (userTypeData && userTypeData.slug) {
@@ -122,7 +122,7 @@ export class UserTypeService {
       deletedBy: userPayload.id,
       status: StatusField.INACTIVE,
     };
-    if (decrypt(userPayload.hashType) != UserTypesEnum.ADMIN) {
+    if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
 
@@ -143,7 +143,7 @@ export class UserTypeService {
    * Hard delete a User Type
    */
   async delete(id: number, userPayload: UserInterface): Promise<any> {
-    if (decrypt(userPayload.hashType) != UserTypesEnum.ADMIN) {
+    if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
     //update deleted data
@@ -155,5 +155,21 @@ export class UserTypeService {
     }
 
     return SuccessMessage.DELETE_SUCCESS;
+  }
+
+  /**
+   * Get One user Type
+   */
+  async findOneType(id: number) {
+    const data = await this.userTypeRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ['users'],
+    });
+    if (!data) {
+      throw new NotFoundException(`User type not exist in db!!`);
+    }
+    return data;
   }
 }

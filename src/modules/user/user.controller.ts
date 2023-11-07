@@ -68,7 +68,7 @@ export class UserController {
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   async signupLocal(@Body() dto: AuthDto) {
-    const data = await this.authService.signupAdmin(dto);
+    const data = await this.authService.signupAdminUser(dto);
 
     return { message: 'Successful', result: data };
   }
@@ -124,7 +124,7 @@ export class UserController {
         value: {
           email: 'rahan@gmail.com',
           password: '123456',
-          userType: 'admin',
+          // userType: 'admin',
         } as unknown as LoginDto,
       },
     },
@@ -140,7 +140,7 @@ export class UserController {
    *  UPDATE USER Profile
    */
   @ApiBearerAuth('jwt')
-  @UseGuards(UseGuards)
+  @UseGuards(UserGuard)
   @Patch(':id')
   @ApiOperation({
     summary: 'Update a User data',
@@ -159,7 +159,7 @@ export class UserController {
           gender: 'male',
           email: 'user@gmail.com',
           password: 'password',
-          userType: 'user',
+          userTypeId: 2,
         } as unknown as UpdateUserDto,
       },
     },
@@ -169,6 +169,8 @@ export class UserController {
     @UserPayload() userPayload: UserInterface,
     @Param('id') id: number,
   ) {
+    console.log(userPayload, 'uuu');
+
     const data = await this.authService.updateUserProfile(
       updateUserDto,
       userPayload,

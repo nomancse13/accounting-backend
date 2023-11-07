@@ -21,7 +21,7 @@ export abstract class CommonEntity {
   @Column({
     type: 'enum',
     enum: UserTypesEnum,
-    default: UserTypesEnum.ADMIN,
+    default: UserTypesEnum.USER,
   })
   createdType: string;
 

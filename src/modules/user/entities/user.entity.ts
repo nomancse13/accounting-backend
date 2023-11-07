@@ -1,7 +1,14 @@
 /**dependencies */
 import { CommonEntity } from 'src/authentication/common';
 import { UserTypesEnum } from 'src/authentication/common/enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { UserTypeEntity } from './user-type.entity';
 /**common entity data */
 @Entity('user')
 export class UserEntity extends CommonEntity {
@@ -23,8 +30,8 @@ export class UserEntity extends CommonEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   hashedRt: string;
 
-  @Column({ type: 'varchar', length: 255, default: UserTypesEnum.USER })
-  userType: string;
+  // @Column({ type: 'varchar', length: 255, default: UserTypesEnum.USER })
+  // userType: string;
 
   @Column({
     type: 'varchar',
@@ -43,4 +50,7 @@ export class UserEntity extends CommonEntity {
 
   @Column({ type: 'uuid', nullable: true })
   uniqueId: string;
+
+  @ManyToOne(() => UserTypeEntity, (userType) => userType.users)
+  userType: UserTypeEntity;
 }

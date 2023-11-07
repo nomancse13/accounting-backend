@@ -18,6 +18,6 @@ import { UserTypeService } from './user-type/user-type.service';
   ],
   controllers: [UserController, UserTypeController],
   providers: [UserService, UserTypeService],
-  exports: [UserService],
+  exports: [UserService, UserTypeService],
 })
 export class UserModule {}

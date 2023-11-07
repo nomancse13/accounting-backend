@@ -1,6 +1,6 @@
 export enum UserTypesEnum {
-  ADMIN = 'admin',
+  // ADMIN = 'admin',
   USER = 'user',
   CLIENT = 'client',
-  GUEST = 'guest'
+  GUEST = 'guest',
 }

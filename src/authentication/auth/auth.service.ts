@@ -36,6 +36,7 @@ import { ChangeForgotPassDto, ForgotPassDto } from './dto';
 import { Brackets } from 'typeorm';
 import { PaginationDataDto } from '../common/dtos';
 import { v4 as uuidv4 } from 'uuid';
+import { UserTypeService } from 'src/modules/user/user-type/user-type.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -45,20 +46,21 @@ export class AuthService {
     private readonly queueMailService: QueueMailService,
     private readonly configService: ConfigService,
     private readonly userService: UserService,
+    private readonly userTypeService: UserTypeService,
   ) {}
 
   // ********** GENERAL USER ********
   //  create user by admin
   async createUser(dto: AuthDto, userPayload: UserInterface): Promise<any> {
-    if (decrypt(userPayload.hashType) != UserTypesEnum.ADMIN) {
+    const userType = await this.userTypeService.findOneType(dto.userTypeId);
+
+    if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
-    console.log(decrypt(userPayload.hashType), 'hhh');
-
     const dataCheck = await this.usersRepository.findOne({
       where: {
         email: dto.email,
-        userType: dto.userType,
+        userType: { id: dto.userTypeId },
       },
     });
 
@@ -73,9 +75,15 @@ export class AuthService {
         dto && dto.password && dto.password.length > 1
           ? bcrypt.hashSync(dto.password, 10)
           : bcrypt.hashSync(secPass, 10);
-
       const insertData = await this.usersRepository.save(dto);
-      return insertData;
+
+      insertData.userType = userType;
+
+      const savedUser = await this.usersRepository.save(insertData);
+
+      // userType.users = [...userType.users, insertData];
+
+      return savedUser;
     }
   }
 
@@ -85,10 +93,8 @@ export class AuthService {
       where: {
         email: loginDto.email,
         status: StatusField.DRAFT,
-        userType: loginDto.userType,
       },
     });
-
     if (userRegCheck) {
       throw new BadRequestException(
         'Your Registration process were pending!!!',
@@ -98,36 +104,29 @@ export class AuthService {
       where: {
         email: loginDto.email,
         status: StatusField.ACTIVE,
-        userType: loginDto.userType,
       },
+      relations: ['userType'],
     });
 
     if (!user) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
-
     const passwordMatches = await bcrypt.compare(
       loginDto.password,
       user.password,
     );
-
     if (!passwordMatches) throw new ForbiddenException('Invalid password!');
-
     const tokens = await this.getTokens({
       id: user.id,
       email: user.email,
-      hashType: encrypt(loginDto.userType),
+      hashType: encrypt(user?.userType?.userTypeName),
     });
-
     await this.updateRtHashUser({ id: user.id }, tokens.refresh_token);
-
     if (tokens) {
       // const mainImage = `../../../assets/png-file/logo.png`;
       const mailData = new QueueMailDto();
       mailData.toMail = user.email;
       mailData.subject = `RB: Login Message`;
       mailData.bodyHTML = `Test Message`;
-
       // mailData.template = './login';
-
       // mailData.context = {
       //   imgSrc: mainImage,
       // };
@@ -179,6 +178,7 @@ export class AuthService {
   async findUserById(userPayload: UserInterface) {
     const data = await this.usersRepository.findOne({
       where: { id: userPayload.id },
+      relations: ['userType'],
     });
     if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
     delete data.password;
@@ -189,6 +189,7 @@ export class AuthService {
   async findUserByUId(uniqueId: string) {
     const data = await this.usersRepository.findOne({
       where: { uniqueId: uniqueId },
+      relations: ['userType'],
     });
     if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
     delete data.password;
@@ -200,6 +201,7 @@ export class AuthService {
   async userById(userId: number) {
     const data = await this.usersRepository.findOne({
       where: { id: userId },
+      relations: ['userType'],
     });
     if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
     delete data.password;
@@ -452,6 +454,13 @@ export class AuthService {
     userPayload: UserInterface,
     id: number,
   ) {
+    const userType = await this.userTypeService.findOneType(
+      updateUserDto.userTypeId,
+    );
+
+    if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
+      throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+    }
     updateUserDto['updatedAt'] = new Date();
     updateUserDto['updatedBy'] = userPayload.id;
 
@@ -467,17 +476,31 @@ export class AuthService {
       }
     }
 
+    delete updateUserDto.userTypeId;
+
     const data = await this.usersRepository
       .createQueryBuilder()
       .update(UserEntity, updateUserDto)
       .where(`id = '${id}'`)
       .execute();
 
-    if (data.affected === 0) {
-      throw new BadRequestException(ErrorMessage.UPDATE_FAILED);
+    const dataFind = await this.usersRepository
+      .createQueryBuilder('user')
+      .where(`user.email='${updateUserDto.email}'`)
+      .andWhere(`user.id = ${userPayload.id}`)
+      .getOne();
+
+    if (dataFind.userType?.id == userType.id) {
+      return `user profile updated successfully!!!`;
+    } else {
+      dataFind.userType = userType;
+      const updateUser = await this.usersRepository.save(dataFind);
+      return `user profile updated successfully!!!`;
     }
 
-    return `user profile updated successfully!!!`;
+    // if (data.affected === 0) {
+    //   throw new BadRequestException(ErrorMessage.UPDATE_FAILED);
+    // }
   }
 
   // get user by id
@@ -492,9 +515,9 @@ export class AuthService {
     filter: any,
     userPayload: UserInterface,
   ) {
-    if (decrypt(userPayload.hashType) !== UserTypesEnum.ADMIN) {
+    if (decrypt(userPayload.hashType) !== UserTypesEnum.USER) {
       throw new BadRequestException(
-        'You are not allow to see any kind of Blog',
+        'You are not allow to see any kind of User',
       );
     }
     const limit: number = listQueryParam.limit ? listQueryParam.limit : 10;
@@ -595,9 +618,11 @@ export class AuthService {
     return 'Admin Profile updated successfully!';
   }
 
-  // sign up admin
-  async signupAdmin(dto: AuthDto): Promise<any> {
-    if (dto.userType != UserTypesEnum.ADMIN) {
+  // sign up admin user
+  async signupAdminUser(dto: AuthDto): Promise<any> {
+    const userType = await this.userTypeService.findOneType(dto.userTypeId);
+
+    if (userType.userTypeName != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
     const dataCheck = await this.usersRepository.findOne({
@@ -605,7 +630,6 @@ export class AuthService {
         email: dto.email,
       },
     });
-
     if (dataCheck) {
       return `this mail is already exist!`;
     } else {
@@ -616,14 +640,13 @@ export class AuthService {
         dto && dto.password && dto.password.length > 1
           ? bcrypt.hashSync(dto.password, 10)
           : bcrypt.hashSync(secPass, 10);
-
       const insertData = await this.usersRepository.save(dto);
       let tokens;
       if (insertData) {
         tokens = await this.getTokens({
           id: insertData.id,
           email: insertData.email,
-          hashType: encrypt(UserTypesEnum.ADMIN),
+          hashType: encrypt(UserTypesEnum.USER),
         });
         await this.updateRtHashAdmin(
           {
@@ -653,7 +676,7 @@ export class AuthService {
     const tokens = await this.getTokens({
       id: systemUser.id,
       email: systemUser.email,
-      hashType: encrypt(UserTypesEnum.ADMIN),
+      hashType: encrypt(UserTypesEnum.USER),
     });
     await this.updateRtHashAdmin(systemUser.id, tokens.refresh_token);
 

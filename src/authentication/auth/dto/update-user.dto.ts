@@ -1,39 +1,45 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger/dist/decorators/api-property.decorator';
+import {
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { UserTypesEnum } from 'src/authentication/common/enum';
 
 export class UpdateUserDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly email: string;
+  fullName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  mobile: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  name: string;
+  gender: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  readonly address: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  userTypeId: number;
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
-  readonly mobile: string;
+  email: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
-  readonly gender: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  readonly maritalStatus: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  readonly birthDate: string;
+  password: string;
 }
