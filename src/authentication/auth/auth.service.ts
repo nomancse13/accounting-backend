@@ -50,7 +50,7 @@ export class AuthService {
   ) {}
 
   // ********** GENERAL USER ********
-  //  create user by admin
+  //  create user by admin user
   async createUser(dto: AuthDto, userPayload: UserInterface): Promise<any> {
     const userType = await this.userTypeService.findOneType(dto.userTypeId);
 
