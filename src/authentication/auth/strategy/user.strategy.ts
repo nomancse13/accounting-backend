@@ -15,8 +15,6 @@ export class UserStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   validate(payload: UserInterface) {
-    console.log(payload, 'ppp');
-
     if (!payload) {
       throw new UnauthorizedException('Unauthorized!');
     }

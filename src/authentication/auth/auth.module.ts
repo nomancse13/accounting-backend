@@ -24,8 +24,7 @@ import { AppLoggerModule } from '../logger/app-logger.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        // secret: configService.get<string>('AT_SECRET'),
-        secretOrPrivateKey: 'thisisdarknightisontequaltoday.weareawesome',
+        secret: configService.get<string>('USER_SECRET'),
         // signOptions: {
         //   expiresIn: 3600,
         // },

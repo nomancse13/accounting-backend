@@ -68,7 +68,7 @@ export class AuthService {
       const secPass = await this.configService.get('GENERATE_SECRET_CODE');
       dto['uniqueId'] = uuidv4();
       dto['status'] = StatusField.ACTIVE;
-      dto['createdType'] = dto.userType;
+      dto['createdType'] = decrypt(userPayload.hashType);
       dto.password =
         dto && dto.password && dto.password.length > 1
           ? bcrypt.hashSync(dto.password, 10)
@@ -108,6 +108,7 @@ export class AuthService {
       loginDto.password,
       user.password,
     );
+
     if (!passwordMatches) throw new ForbiddenException('Invalid password!');
 
     const tokens = await this.getTokens({
@@ -115,6 +116,7 @@ export class AuthService {
       email: user.email,
       hashType: encrypt(loginDto.userType),
     });
+
     await this.updateRtHashUser({ id: user.id }, tokens.refresh_token);
 
     if (tokens) {
@@ -545,7 +547,7 @@ export class AuthService {
 
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret: this.configService.get<string>('AT_SECRET'),
+        secret: this.configService.get<string>('USER_SECRET'),
         expiresIn: '10d',
       }),
       this.jwtService.signAsync(payload, {
