@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { LedgersEntity } from '../../ledgers/entity';
+import { UserEntity } from '../../entities';
 
 @Entity()
 export class CurrencyEntity extends CommonEntity {
@@ -48,4 +49,7 @@ export class CurrencyEntity extends CommonEntity {
 
   @OneToMany(() => LedgersEntity, (ledger) => ledger.currency)
   ledgers: LedgersEntity[];
+
+  @OneToMany(() => UserEntity, (user) => user.currency)
+  users: UserEntity[];
 }

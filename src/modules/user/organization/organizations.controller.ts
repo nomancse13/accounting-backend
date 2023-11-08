@@ -21,71 +21,67 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { LedgersService } from './ledgers.service';
-import { CreateLedgersDto, UpdateLedgersDto } from './dtos';
+import { CreateOrganizationsDto, UpdateOrganizationsDto } from './dtos';
 import {
   PaginationOptionsInterface,
   UserInterface,
 } from 'src/authentication/common/interfaces';
 import { UserPayload } from 'src/authentication/utils/decorators';
+import { OrganizationsService } from './organizations.service';
 
-@ApiTags('User|Ledgers')
+@ApiTags('User|Organizations')
 @ApiBearerAuth('jwt')
 @UseGuards(UserGuard)
 @Controller({
-  path: 'ledger',
+  path: 'organizations',
   version: '1',
 })
-export class LedgerController {
-  constructor(private ledgersService: LedgersService) {}
+export class OrganizationsController {
+  constructor(private organizationsService: OrganizationsService) {}
 
-  //   create a new ledger
+  //   create a new organizations
   @ApiOperation({
-    summary: 'create ledgers by a user',
-    description: 'this route is responsible for create a ledgers',
+    summary: 'create organizations by a user',
+    description: 'this route is responsible for create a organizations',
   })
   @ApiBody({
-    type: CreateLedgersDto,
+    type: CreateOrganizationsDto,
     description:
-      'How to create a ledgers with body?... here is the example given below!',
+      'How to create a organizations with body?... here is the example given below!',
     examples: {
       a: {
         summary: 'enter ledger info',
         value: {
-          ledgerName: 'test11',
-          ledgerParent: 1,
-          ledgerType: 'test',
-          nature: 'test',
-          accountOpeningBalance: 1,
-          openingBalance: 1,
-          closingBalance: 1,
-          currencyId: 1,
-        } as unknown as CreateLedgersDto,
+          organisationName: 'test11',
+          organisationType: 'test',
+          organizationLogo: 'test',
+          licenseExpired: 'test',
+        } as unknown as CreateOrganizationsDto,
       },
     },
   })
   @Post()
   async create(
-    @Body() createLedgersDto: CreateLedgersDto,
+    @Body() createOrganizationsDto: CreateOrganizationsDto,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const data = await this.ledgersService.createLedger(
-      createLedgersDto,
+    const data = await this.organizationsService.createOrganizations(
+      createOrganizationsDto,
       userPayload,
     );
 
     return { message: 'successful!', result: data };
   }
 
-  // update a ledger by id
+  // update an organaization by id
   @ApiOperation({
-    summary: 'update a ledger by id',
-    description: 'this route is responsible for update a ledger by id',
+    summary: 'update organaization by id',
+    description: 'this route is responsible for update organaization by id',
   })
   @ApiBody({
-    type: UpdateLedgersDto,
+    type: UpdateOrganizationsDto,
     description:
-      'How to update a ledger by id?... here is the example given below!',
+      'How to update an organaization by id?... here is the example given below!',
     examples: {
       a: {
         summary: 'default',
@@ -101,16 +97,16 @@ export class LedgerController {
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'for update a ledger required id',
+    description: 'for update a Organizations required id',
     required: true,
   })
   @Patch(':id')
   async update(
-    @Body() updateOrganizationsDto: UpdateLedgersDto,
+    @Body() updateOrganizationsDto: UpdateOrganizationsDto,
     @UserPayload() userPayload: UserInterface,
     @Param('id') id: number,
   ) {
-    const data = await this.ledgersService.updateLedger(
+    const data = await this.organizationsService.updateOrganizations(
       updateOrganizationsDto,
       userPayload,
       id,
@@ -118,28 +114,29 @@ export class LedgerController {
     return { message: 'successful!', result: data };
   }
 
-  // find single ledger
+  // find single Organizations
   @ApiOperation({
-    summary: 'find single ledger by id',
-    description: 'this route is responsible for find single ledger by id',
+    summary: 'find single Organizations by id',
+    description:
+      'this route is responsible for find single Organizations by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'find single ledger required id',
+    description: 'find single Organizations required id',
     required: true,
   })
   @Get(':id')
-  async findledger(@Param('id') id: number) {
-    const data = await this.ledgersService.findOneLedger(id);
+  async findOrganizations(@Param('id') id: number) {
+    const data = await this.organizationsService.findOneOrganizations(id);
     return { message: 'successful!', result: data };
   }
 
-  // get all ledger data with paginaiton
+  // get all organization data with paginaiton
   @ApiOperation({
-    summary: 'get all ledger data with pagination',
+    summary: 'get all organization data with pagination',
     description:
-      'this route is responsible for getting all ledger data with pagination',
+      'this route is responsible for getting all organization data with pagination',
   })
   @ApiQuery({
     name: 'limit',
@@ -165,7 +162,7 @@ export class LedgerController {
     @Query('filter') filter: any,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const result = await this.ledgersService.findAllLedger(
+    const result = await this.organizationsService.findAllOrganizations(
       listQueryParam,
       filter,
       userPayload,
@@ -174,20 +171,21 @@ export class LedgerController {
     return { message: 'successful', result: result };
   }
 
-  // delete single ledger
+  // delete single Organizations
   @ApiOperation({
-    summary: 'delete single ledger by id',
-    description: 'this route is responsible for delete single ledger by id',
+    summary: 'delete single Organizations by id',
+    description:
+      'this route is responsible for delete single Organizations by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'delete single ledger required id',
+    description: 'delete single Organizations required id',
     required: true,
   })
   @Delete(':id')
-  async deleteApiPlan(@Param('id') id: number) {
-    const data = await this.ledgersService.deleteLedger(id);
+  async deleteOrganizations(@Param('id') id: number) {
+    const data = await this.organizationsService.deleteOrganizations(id);
     return { message: 'successful!', result: data };
   }
 }

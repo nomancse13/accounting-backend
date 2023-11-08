@@ -37,6 +37,7 @@ import { Brackets } from 'typeorm';
 import { PaginationDataDto } from '../common/dtos';
 import { v4 as uuidv4 } from 'uuid';
 import { UserTypeService } from 'src/modules/user/user-type/user-type.service';
+import { LedgersService } from 'src/modules/user/ledgers/ledgers.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -47,12 +48,17 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly userService: UserService,
     private readonly userTypeService: UserTypeService,
+    private readonly ledgersService: LedgersService,
   ) {}
 
   // ********** GENERAL USER ********
   //  create user by admin user
   async createUser(dto: AuthDto, userPayload: UserInterface): Promise<any> {
     const userType = await this.userTypeService.findOneType(dto.userTypeId);
+    const ledgerInfo = await this.ledgersService.findOneLedger(dto.ledgerId);
+    const currencyInfo = await this.ledgersService.findOneCurrency(
+      dto.currencyId,
+    );
 
     if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
@@ -78,6 +84,8 @@ export class AuthService {
       const insertData = await this.usersRepository.save(dto);
 
       insertData.userType = userType;
+      insertData.ledger = ledgerInfo;
+      insertData.currency = currencyInfo;
 
       const savedUser = await this.usersRepository.save(insertData);
 
@@ -109,10 +117,17 @@ export class AuthService {
     });
 
     if (!user) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
+
+    if (user && !user.userType) {
+      throw new BadRequestException(`userType not found!!`);
+    }
     const passwordMatches = await bcrypt.compare(
       loginDto.password,
       user.password,
     );
+
+    console.log(user, 'pppa');
+
     if (!passwordMatches) throw new ForbiddenException('Invalid password!');
     const tokens = await this.getTokens({
       id: user.id,
@@ -178,7 +193,7 @@ export class AuthService {
   async findUserById(userPayload: UserInterface) {
     const data = await this.usersRepository.findOne({
       where: { id: userPayload.id },
-      relations: ['userType'],
+      relations: ['userType', 'ledger', 'currency'],
     });
     if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
     delete data.password;
@@ -189,7 +204,7 @@ export class AuthService {
   async findUserByUId(uniqueId: string) {
     const data = await this.usersRepository.findOne({
       where: { uniqueId: uniqueId },
-      relations: ['userType'],
+      relations: ['userType', 'ledger', 'currency'],
     });
     if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
     delete data.password;
@@ -201,7 +216,7 @@ export class AuthService {
   async userById(userId: number) {
     const data = await this.usersRepository.findOne({
       where: { id: userId },
-      relations: ['userType'],
+      relations: ['userType', 'ledger', 'currency'],
     });
     if (!data) throw new ForbiddenException(ErrorMessage.NO_USER_FOUND);
     delete data.password;
@@ -468,17 +483,28 @@ export class AuthService {
       const dataCheck = await this.usersRepository
         .createQueryBuilder('user')
         .where(`user.email='${updateUserDto.email}'`)
-        .andWhere(`user.id != ${userPayload.id}`)
+        .andWhere(`user.id != ${id}`)
         .getOne();
 
       if (dataCheck) {
-        return `Email you provided, already exist. Please fill another email.`;
+        throw new BadRequestException(
+          `Email you provided, already exist. Please fill another email.`,
+        );
       }
     }
 
-    delete updateUserDto.userTypeId;
+    const ledgerInfo = await this.ledgersService.findOneLedger(
+      updateUserDto.ledgerId,
+    );
+    const currencyInfo = await this.ledgersService.findOneCurrency(
+      updateUserDto.currencyId,
+    );
 
-    const data = await this.usersRepository
+    delete updateUserDto.userTypeId;
+    delete updateUserDto.ledgerId;
+    delete updateUserDto.currencyId;
+
+    const updateUser = await this.usersRepository
       .createQueryBuilder()
       .update(UserEntity, updateUserDto)
       .where(`id = '${id}'`)
@@ -487,16 +513,14 @@ export class AuthService {
     const dataFind = await this.usersRepository
       .createQueryBuilder('user')
       .where(`user.email='${updateUserDto.email}'`)
-      .andWhere(`user.id = ${userPayload.id}`)
+      .andWhere(`user.id = ${id}`)
       .getOne();
 
-    if (dataFind.userType?.id == userType.id) {
-      return `user profile updated successfully!!!`;
-    } else {
-      dataFind.userType = userType;
-      const updateUser = await this.usersRepository.save(dataFind);
-      return `user profile updated successfully!!!`;
-    }
+    dataFind.userType = userType;
+    dataFind.currency = currencyInfo;
+    dataFind.ledger = ledgerInfo;
+    await this.usersRepository.save(dataFind);
+    return `user profile updated successfully!!!`;
 
     // if (data.affected === 0) {
     //   throw new BadRequestException(ErrorMessage.UPDATE_FAILED);
@@ -529,10 +553,13 @@ export class AuthService {
 
     const [result, total] = await this.usersRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.userType', 'userType')
+      .leftJoinAndSelect('user.currency', 'currency')
+      .leftJoinAndSelect('user.ledger', 'ledger')
       .where(
         new Brackets((qb) => {
           if (filter) {
-            qb.where(`user.name ILIKE ('%${filter}%')`);
+            qb.where(`user.fullName ILIKE ('%${filter}%')`);
           }
         }),
       )
@@ -641,6 +668,8 @@ export class AuthService {
           ? bcrypt.hashSync(dto.password, 10)
           : bcrypt.hashSync(secPass, 10);
       const insertData = await this.usersRepository.save(dto);
+      insertData.userType = userType;
+      await this.usersRepository.save(insertData);
       let tokens;
       if (insertData) {
         tokens = await this.getTokens({

@@ -160,6 +160,8 @@ export class UserController {
           email: 'user@gmail.com',
           password: 'password',
           userTypeId: 2,
+          ledgerId: 2,
+          currencyId: 1,
         } as unknown as UpdateUserDto,
       },
     },
@@ -169,8 +171,6 @@ export class UserController {
     @UserPayload() userPayload: UserInterface,
     @Param('id') id: number,
   ) {
-    console.log(userPayload, 'uuu');
-
     const data = await this.authService.updateUserProfile(
       updateUserDto,
       userPayload,

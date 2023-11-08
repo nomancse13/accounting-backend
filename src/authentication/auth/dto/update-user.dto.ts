@@ -35,6 +35,16 @@ export class UpdateUserDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsNumber()
+  ledgerId: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  currencyId: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
   email: string;
 

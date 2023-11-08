@@ -9,6 +9,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserTypeEntity } from './user-type.entity';
+import { LedgersEntity } from '../ledgers/entity';
+import { CurrencyEntity } from '../currency/entity';
 /**common entity data */
 @Entity('user')
 export class UserEntity extends CommonEntity {
@@ -51,6 +53,18 @@ export class UserEntity extends CommonEntity {
   @Column({ type: 'uuid', nullable: true })
   uniqueId: string;
 
-  @ManyToOne(() => UserTypeEntity, (userType) => userType.users)
+  @ManyToOne(() => UserTypeEntity, (userType) => userType.users, {
+    onDelete: 'RESTRICT',
+  })
   userType: UserTypeEntity;
+
+  @ManyToOne(() => CurrencyEntity, (currency) => currency.users, {
+    onDelete: 'RESTRICT',
+  })
+  currency: CurrencyEntity;
+
+  @ManyToOne(() => LedgersEntity, (ledger) => ledger.users, {
+    onDelete: 'RESTRICT',
+  })
+  ledger: LedgersEntity;
 }

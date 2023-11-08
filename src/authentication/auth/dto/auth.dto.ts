@@ -33,6 +33,16 @@ export class AuthDto {
   @IsNumber()
   userTypeId: number;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  ledgerId: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  currencyId: number;
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

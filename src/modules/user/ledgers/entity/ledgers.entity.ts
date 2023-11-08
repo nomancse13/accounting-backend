@@ -3,8 +3,15 @@ import {
   SubscriptionStatusEnum,
   UserTypesEnum,
 } from 'src/authentication/common/enum';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CurrencyEntity } from '../../currency/entity';
+import { UserEntity } from '../../entities';
 
 @Entity()
 export class LedgersEntity extends CommonEntity {
@@ -40,6 +47,11 @@ export class LedgersEntity extends CommonEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   closingBalance: number;
 
-  @ManyToOne(() => CurrencyEntity, (currency) => currency.ledgers)
+  @ManyToOne(() => CurrencyEntity, (currency) => currency.ledgers, {
+    onDelete: 'RESTRICT',
+  })
   currency: CurrencyEntity;
+
+  @OneToMany(() => UserEntity, (user) => user.ledger)
+  users: UserEntity[];
 }

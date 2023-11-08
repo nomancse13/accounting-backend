@@ -2,7 +2,11 @@ import { BaseRepository } from 'typeorm-transactional-cls-hooked';
 import { UserTypeEntity } from '../entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common/decorators';
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  NotFoundException,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import {
   CreateUserTypeDto,
   DeleteUserTypeDto,
@@ -146,15 +150,22 @@ export class UserTypeService {
     if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
     }
-    //update deleted data
-    const deletedResult = await this.userTypeRepository.delete({
-      id: id,
-    });
-    if (!deletedResult.affected) {
-      throw new NotFoundException(ErrorMessage.DELETE_FAILED);
-    }
 
-    return SuccessMessage.DELETE_SUCCESS;
+    try {
+      //update deleted data
+      const deletedResult = await this.userTypeRepository.delete({
+        id: id,
+      });
+      if (!deletedResult.affected) {
+        throw new NotFoundException(ErrorMessage.DELETE_FAILED);
+      }
+
+      return SuccessMessage.DELETE_SUCCESS;
+    } catch (e) {
+      throw new BadRequestException(
+        `this ledger related as a foreign member. can not deleted`,
+      );
+    }
   }
 
   /**
