@@ -22,7 +22,7 @@ export class AccountingGroupEntity extends CommonEntity {
   groupIdentifier: string;
 
   @Column({ type: 'varchar', length: 255 })
-  GroupType: string;
+  groupType: string;
 
   @Column({ type: 'varchar', length: 255 })
   nature: string;

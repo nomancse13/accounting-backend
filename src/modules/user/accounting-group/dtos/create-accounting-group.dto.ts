@@ -1,44 +1,39 @@
-// import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-// import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-// export class CreateLedgersDto {
-//   @ApiProperty()
-//   @IsNotEmpty()
-//   @IsString()
-//   ledgerName: string;
+export class CreateAccountingGroupDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  groupName: string;
 
-//   @ApiProperty()
-//   @IsNotEmpty()
-//   @IsNumber()
-//   ledgerParent: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  groupParent: number;
 
-//   @ApiPropertyOptional()
-//   @IsOptional()
-//   @IsString()
-//   ledgerType: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  groupIdentifier: string;
 
-//   @ApiPropertyOptional()
-//   @IsOptional()
-//   @IsString()
-//   nature: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  groupType: string;
 
-//   @ApiProperty()
-//   @IsNotEmpty()
-//   @IsNumber()
-//   accountOpeningBalance: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  nature: string;
 
-//   @ApiProperty()
-//   @IsNotEmpty()
-//   @IsNumber()
-//   openingBalance: number;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  postedTo: string;
 
-//   @ApiProperty()
-//   @IsNotEmpty()
-//   @IsNumber()
-//   closingBalance: number;
-
-//   @ApiProperty()
-//   @IsNotEmpty()
-//   @IsNumber()
-//   currencyId: number;
-// }
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  groupHeadType: string;
+}

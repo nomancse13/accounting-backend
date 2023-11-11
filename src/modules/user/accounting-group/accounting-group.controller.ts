@@ -1,193 +1,196 @@
-// import { UserGuard } from 'src/authentication/auth/guards';
-// import {
-//   Body,
-//   Controller,
-//   Get,
-//   HttpCode,
-//   HttpStatus,
-//   Post,
-//   Query,
-//   UseGuards,
-//   Param,
-//   Patch,
-//   Delete,
-// } from '@nestjs/common';
+import { UserGuard } from 'src/authentication/auth/guards';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  UseGuards,
+  Param,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 
-// import {
-//   ApiBearerAuth,
-//   ApiBody,
-//   ApiOperation,
-//   ApiParam,
-//   ApiQuery,
-//   ApiTags,
-// } from '@nestjs/swagger';
-// import { LedgersService } from './accounting-group.service';
-// import { CreateLedgersDto, UpdateLedgersDto } from './dtos';
-// import {
-//   PaginationOptionsInterface,
-//   UserInterface,
-// } from 'src/authentication/common/interfaces';
-// import { UserPayload } from 'src/authentication/utils/decorators';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { CreateAccountingGroupDto, UpdateAccountingGroupDto } from './dtos';
+import {
+  PaginationOptionsInterface,
+  UserInterface,
+} from 'src/authentication/common/interfaces';
+import { UserPayload } from 'src/authentication/utils/decorators';
+import { AccountingGroupService } from './accounting-group.service';
+import { UpdateOrganizationsDto } from '../organization/dtos';
 
-// @ApiTags('User|Ledgers')
-// @ApiBearerAuth('jwt')
-// @UseGuards(UserGuard)
-// @Controller({
-//   path: 'ledger',
-//   version: '1',
-// })
-// export class LedgerController {
-//   constructor(private ledgersService: LedgersService) {}
+@ApiTags('User|Accounting Group')
+@ApiBearerAuth('jwt')
+@UseGuards(UserGuard)
+@Controller({
+  path: 'group',
+  version: '1',
+})
+export class AccountingGroupController {
+  constructor(private accountingGroupService: AccountingGroupService) {}
 
-//   //   create a new ledger
-//   @ApiOperation({
-//     summary: 'create ledgers by a user',
-//     description: 'this route is responsible for create a ledgers',
-//   })
-//   @ApiBody({
-//     type: CreateLedgersDto,
-//     description:
-//       'How to create a ledgers with body?... here is the example given below!',
-//     examples: {
-//       a: {
-//         summary: 'enter ledger info',
-//         value: {
-//           ledgerName: 'test11',
-//           ledgerParent: 1,
-//           ledgerType: 'test',
-//           nature: 'test',
-//           accountOpeningBalance: 1,
-//           openingBalance: 1,
-//           closingBalance: 1,
-//           currencyId: 1,
-//         } as unknown as CreateLedgersDto,
-//       },
-//     },
-//   })
-//   @Post()
-//   async create(
-//     @Body() createLedgersDto: CreateLedgersDto,
-//     @UserPayload() userPayload: UserInterface,
-//   ) {
-//     const data = await this.ledgersService.createLedger(
-//       createLedgersDto,
-//       userPayload,
-//     );
+  //   create a new group
+  @ApiOperation({
+    summary: 'create group by a user',
+    description: 'this route is responsible for create a group',
+  })
+  @ApiBody({
+    type: CreateAccountingGroupDto,
+    description:
+      'How to create a group with body?... here is the example given below!',
+    examples: {
+      a: {
+        summary: 'enter group info',
+        value: {
+          groupName: 'test11',
+          groupParent: 1,
+          groupIdentifier: 'test',
+          groupType: 'test',
+          nature: 'test',
+          postedTo: 'test',
+          groupHeadType: 'test',
+        } as unknown as CreateAccountingGroupDto,
+      },
+    },
+  })
+  @Post()
+  async create(
+    @Body() createAccountingGroupDto: CreateAccountingGroupDto,
+    @UserPayload() userPayload: UserInterface,
+  ) {
+    const data = await this.accountingGroupService.createAccGroup(
+      createAccountingGroupDto,
+      userPayload,
+    );
 
-//     return { message: 'successful!', result: data };
-//   }
+    return { message: 'successful!', result: data };
+  }
 
-//   // update a ledger by id
-//   @ApiOperation({
-//     summary: 'update a ledger by id',
-//     description: 'this route is responsible for update a ledger by id',
-//   })
-//   @ApiBody({
-//     type: UpdateLedgersDto,
-//     description:
-//       'How to update a ledger by id?... here is the example given below!',
-//     examples: {
-//       a: {
-//         summary: 'default',
-//         value: {
-//           organisationName: 'test11',
-//           organisationType: 'test',
-//           organizationLogo: 'test',
-//           licenseExpired: 'test',
-//         },
-//       },
-//     },
-//   })
-//   @ApiParam({
-//     name: 'id',
-//     type: Number,
-//     description: 'for update a ledger required id',
-//     required: true,
-//   })
-//   @Patch(':id')
-//   async update(
-//     @Body() updateOrganizationsDto: UpdateLedgersDto,
-//     @UserPayload() userPayload: UserInterface,
-//     @Param('id') id: number,
-//   ) {
-//     const data = await this.ledgersService.updateLedger(
-//       updateOrganizationsDto,
-//       userPayload,
-//       id,
-//     );
-//     return { message: 'successful!', result: data };
-//   }
+  // update an group by id
+  @ApiOperation({
+    summary: 'update group by id',
+    description: 'this route is responsible for update group by id',
+  })
+  @ApiBody({
+    type: UpdateOrganizationsDto,
+    description:
+      'How to update an group by id?... here is the example given below!',
+    examples: {
+      a: {
+        summary: 'default',
+        value: {
+          groupName: 'test11',
+          groupParent: 1,
+          groupIdentifier: 'test',
+          groupType: 'test',
+          nature: 'test',
+          postedTo: 'test',
+          groupHeadType: 'test',
+        },
+      },
+    },
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'for update a group required id',
+    required: true,
+  })
+  @Patch(':id')
+  async update(
+    @Body() updateAccountingGroupDto: UpdateAccountingGroupDto,
+    @UserPayload() userPayload: UserInterface,
+    @Param('id') id: number,
+  ) {
+    const data = await this.accountingGroupService.updateAccGroup(
+      updateAccountingGroupDto,
+      userPayload,
+      id,
+    );
+    return { message: 'successful!', result: data };
+  }
 
-//   // find single ledger
-//   @ApiOperation({
-//     summary: 'find single ledger by id',
-//     description: 'this route is responsible for find single ledger by id',
-//   })
-//   @ApiParam({
-//     name: 'id',
-//     type: Number,
-//     description: 'find single ledger required id',
-//     required: true,
-//   })
-//   @Get(':id')
-//   async findledger(@Param('id') id: number) {
-//     const data = await this.ledgersService.findOneLedger(id);
-//     return { message: 'successful!', result: data };
-//   }
+  // find single group
+  @ApiOperation({
+    summary: 'find single group by id',
+    description: 'this route is responsible for find single group by id',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'find single group required id',
+    required: true,
+  })
+  @Get(':id')
+  async findGroup(@Param('id') id: number) {
+    const data = await this.accountingGroupService.findOneGroup(id);
+    return { message: 'successful!', result: data };
+  }
 
-//   // get all ledger data with paginaiton
-//   @ApiOperation({
-//     summary: 'get all ledger data with pagination',
-//     description:
-//       'this route is responsible for getting all ledger data with pagination',
-//   })
-//   @ApiQuery({
-//     name: 'limit',
-//     type: Number,
-//     description: 'insert limit if you need',
-//     required: false,
-//   })
-//   @ApiQuery({
-//     name: 'page',
-//     type: Number,
-//     description: 'insert page if you need',
-//     required: false,
-//   })
-//   @ApiQuery({
-//     name: 'filter',
-//     type: String,
-//     description: 'insert filter if you need',
-//     required: false,
-//   })
-//   @Get('get/all')
-//   async apiPlanData(
-//     @Query() listQueryParam: PaginationOptionsInterface,
-//     @Query('filter') filter: any,
-//     @UserPayload() userPayload: UserInterface,
-//   ) {
-//     const result = await this.ledgersService.findAllLedger(
-//       listQueryParam,
-//       filter,
-//       userPayload,
-//     );
+  // get all group data with paginaiton
+  @ApiOperation({
+    summary: 'get all group data with pagination',
+    description:
+      'this route is responsible for getting all group data with pagination',
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    description: 'insert limit if you need',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    description: 'insert page if you need',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'filter',
+    type: String,
+    description: 'insert filter if you need',
+    required: false,
+  })
+  @Get('get/all')
+  async apiPlanData(
+    @Query() listQueryParam: PaginationOptionsInterface,
+    @Query('filter') filter: any,
+    @UserPayload() userPayload: UserInterface,
+  ) {
+    const result = await this.accountingGroupService.findAllGroup(
+      listQueryParam,
+      filter,
+      userPayload,
+    );
 
-//     return { message: 'successful', result: result };
-//   }
+    return { message: 'successful', result: result };
+  }
 
-//   // delete single ledger
-//   @ApiOperation({
-//     summary: 'delete single ledger by id',
-//     description: 'this route is responsible for delete single ledger by id',
-//   })
-//   @ApiParam({
-//     name: 'id',
-//     type: Number,
-//     description: 'delete single ledger required id',
-//     required: true,
-//   })
-//   @Delete(':id')
-//   async deleteApiPlan(@Param('id') id: number) {
-//     const data = await this.ledgersService.deleteLedger(id);
-//     return { message: 'successful!', result: data };
-//   }
-// }
+  // delete single group
+  @ApiOperation({
+    summary: 'delete single group by id',
+    description: 'this route is responsible for delete single group by id',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'delete single group required id',
+    required: true,
+  })
+  @Delete(':id')
+  async deleteGroup(@Param('id') id: number) {
+    const data = await this.accountingGroupService.deleteGroup(id);
+    return { message: 'successful!', result: data };
+  }
+}

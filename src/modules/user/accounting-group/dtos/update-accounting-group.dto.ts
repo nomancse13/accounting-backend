@@ -1,4 +1,6 @@
-// import { PartialType } from '@nestjs/swagger';
-// import { CreateLedgersDto } from './create-accounting-group.dto';
+import { PartialType } from '@nestjs/swagger';
+import { CreateAccountingGroupDto } from './create-accounting-group.dto';
 
-// export class UpdateLedgersDto extends PartialType(CreateLedgersDto) {}
+export class UpdateAccountingGroupDto extends PartialType(
+  CreateAccountingGroupDto,
+) {}

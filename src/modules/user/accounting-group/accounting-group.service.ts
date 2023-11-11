@@ -1,182 +1,140 @@
-// import {
-//   Injectable,
-//   UnauthorizedException,
-//   NotFoundException,
-//   BadRequestException,
-// } from '@nestjs/common';
-// import { CreateLedgersDto, UpdateLedgersDto } from './dtos';
-// import {
-//   Pagination,
-//   PaginationOptionsInterface,
-//   UserInterface,
-// } from 'src/authentication/common/interfaces';
-// import { LedgersEntity } from './entity';
-// import { BaseRepository } from 'typeorm-transactional-cls-hooked';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { CurrencyEntity } from '../currency/entity';
-// import { decrypt } from 'src/helper/crypto.helper';
-// import { ErrorMessage, UserTypesEnum } from 'src/authentication/common/enum';
-// import { Brackets } from 'typeorm';
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { CreateAccountingGroupDto, UpdateAccountingGroupDto } from './dtos';
+import {
+  Pagination,
+  PaginationOptionsInterface,
+  UserInterface,
+} from 'src/authentication/common/interfaces';
+import { AccountingGroupEntity } from './entity';
+import { BaseRepository } from 'typeorm-transactional-cls-hooked';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CurrencyEntity } from '../currency/entity';
+import { decrypt } from 'src/helper/crypto.helper';
+import { ErrorMessage, UserTypesEnum } from 'src/authentication/common/enum';
+import { Brackets } from 'typeorm';
 
-// @Injectable()
-// export class LedgersService {
-//   constructor(
-//     @InjectRepository(LedgersEntity)
-//     private ledgersRepository: BaseRepository<LedgersEntity>,
-//     @InjectRepository(CurrencyEntity)
-//     private currencyRepository: BaseRepository<CurrencyEntity>,
-//   ) {}
+@Injectable()
+export class AccountingGroupService {
+  constructor(
+    @InjectRepository(AccountingGroupEntity)
+    private accountingGroupRepository: BaseRepository<AccountingGroupEntity>,
+  ) {}
 
-//   //  create ledger
-//   async createLedger(
-//     createLedgersDto: CreateLedgersDto,
-//     userPayload: UserInterface,
-//   ): Promise<any> {
-//     const currency = await this.currencyRepository.findOne({
-//       where: {
-//         id: createLedgersDto.currencyId,
-//       },
-//       relations: ['ledgers'],
-//     });
+  //  create group
+  async createAccGroup(
+    createAccountingGroupDto: CreateAccountingGroupDto,
+    userPayload: UserInterface,
+  ): Promise<any> {
+    if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
+      throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+    }
 
-//     if (decrypt(userPayload.hashType) != UserTypesEnum.USER) {
-//       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
-//     }
+    createAccountingGroupDto['createdBy'] = userPayload.id;
 
-//     createLedgersDto['createdBy'] = userPayload.id;
+    const insertData = await this.accountingGroupRepository.save(
+      createAccountingGroupDto,
+    );
 
-//     delete createLedgersDto.currencyId;
-//     const insertData = await this.ledgersRepository.save(createLedgersDto);
+    return insertData;
+  }
 
-//     insertData.currency = currency;
+  // update group
+  async updateAccGroup(
+    updateAccountingGroupDto: UpdateAccountingGroupDto,
+    userPayload: UserInterface,
+    id: number,
+  ) {
+    try {
+      updateAccountingGroupDto['updatedAt'] = new Date();
+      updateAccountingGroupDto['updatedBy'] = userPayload.id;
 
-//     const savedLedger = await this.ledgersRepository.save(insertData);
+      const data = await this.accountingGroupRepository
+        .createQueryBuilder()
+        .update(AccountingGroupEntity, updateAccountingGroupDto)
+        .where(`id = '${id}'`)
+        .execute();
 
-//     return savedLedger;
-//   }
+      return `group updated successfully!!!`;
+    } catch (e) {
+      throw new BadRequestException(ErrorMessage.UPDATE_FAILED);
+    }
 
-//   // update ledger
-//   async updateLedger(
-//     updateLedgersDto: UpdateLedgersDto,
-//     userPayload: UserInterface,
-//     id: number,
-//   ) {
-//     try {
-//       const currency = await this.findOneCurrency(updateLedgersDto.currencyId);
+    // if (data.affected === 0) {
+    //   throw new BadRequestException(ErrorMessage.UPDATE_FAILED);
+    // }
+  }
 
-//       updateLedgersDto['updatedAt'] = new Date();
-//       updateLedgersDto['updatedBy'] = userPayload.id;
+  // find all group
+  async findAllGroup(
+    listQueryParam: PaginationOptionsInterface,
+    filter: any,
+    userPayload: UserInterface,
+  ) {
+    const limit: number = listQueryParam.limit ? listQueryParam.limit : 10;
+    const page: number = listQueryParam.page
+      ? +listQueryParam.page == 1
+        ? 0
+        : listQueryParam.page
+      : 1;
 
-//       delete updateLedgersDto.currencyId;
+    const [results, total] = await this.accountingGroupRepository
+      .createQueryBuilder('group')
+      .where(
+        new Brackets((qb) => {
+          if (filter) {
+            qb.where(`group.groupName ILIKE ('%${filter}%')`);
+          }
+        }),
+      )
+      .orderBy('group.id', 'DESC')
+      .take(limit)
+      .skip(page > 0 ? page * limit - limit : page)
+      .getManyAndCount();
 
-//       const data = await this.ledgersRepository
-//         .createQueryBuilder()
-//         .update(LedgersEntity, updateLedgersDto)
-//         .where(`id = '${id}'`)
-//         .execute();
+    return new Pagination<any>({
+      results,
+      total,
+      currentPage: page === 0 ? 1 : page,
+      limit,
+    });
+  }
 
-//       const dataFind = await this.ledgersRepository
-//         .createQueryBuilder('ledger')
-//         .where(`ledger.id = ${id}`)
-//         .getOne();
+  // delete group
+  async deleteGroup(id: number): Promise<any> {
+    try {
+      const group = await this.accountingGroupRepository.findOne({
+        where: {
+          id: id,
+        },
+      });
 
-//       dataFind.currency = currency;
-//       await this.ledgersRepository.save(dataFind);
-//       return `user profile updated successfully!!!`;
-//     } catch (e) {
-//       throw new BadRequestException(ErrorMessage.UPDATE_FAILED);
-//     }
+      if (!group) {
+        throw new NotFoundException('group not found');
+      }
 
-//     // if (data.affected === 0) {
-//     //   throw new BadRequestException(ErrorMessage.UPDATE_FAILED);
-//     // }
-//   }
+      return await this.accountingGroupRepository.remove(group);
+    } catch (e) {
+      throw new BadRequestException(`this group not found. can not deleted`);
+    }
+  }
 
-//   // find all ledger
-//   async findAllLedger(
-//     listQueryParam: PaginationOptionsInterface,
-//     filter: any,
-//     userPayload: UserInterface,
-//   ) {
-//     const limit: number = listQueryParam.limit ? listQueryParam.limit : 10;
-//     const page: number = listQueryParam.page
-//       ? +listQueryParam.page == 1
-//         ? 0
-//         : listQueryParam.page
-//       : 1;
-
-//     const [results, total] = await this.ledgersRepository
-//       .createQueryBuilder('ledger')
-//       .leftJoinAndSelect('ledger.currency', 'currency')
-//       .where(
-//         new Brackets((qb) => {
-//           if (filter) {
-//             qb.where(`ledger.ledgerName ILIKE ('%${filter}%')`);
-//           }
-//         }),
-//       )
-//       .orderBy('ledger.id', 'DESC')
-//       .take(limit)
-//       .skip(page > 0 ? page * limit - limit : page)
-//       .getManyAndCount();
-
-//     return new Pagination<any>({
-//       results,
-//       total,
-//       currentPage: page === 0 ? 1 : page,
-//       limit,
-//     });
-//   }
-
-//   // delete ledger
-//   async deleteLedger(id: number): Promise<any> {
-//     try {
-//       const ledger = await this.ledgersRepository.findOne({
-//         where: {
-//           id: id,
-//         },
-//       });
-
-//       if (!ledger) {
-//         throw new NotFoundException('ledger not found');
-//       }
-
-//       return await this.ledgersRepository.remove(ledger);
-//     } catch (e) {
-//       throw new BadRequestException(
-//         `this ledger related as a foreign member. can not deleted`,
-//       );
-//     }
-//   }
-
-//   /**
-//    * Get One ledger
-//    */
-//   async findOneLedger(id: number) {
-//     const data = await this.ledgersRepository.findOne({
-//       where: {
-//         id: id,
-//       },
-//       relations: ['users', 'currency'],
-//     });
-//     if (!data) {
-//       throw new NotFoundException(`Ledger not exist in db!!`);
-//     }
-//     return data;
-//   }
-//   /**
-//    * Get One currency
-//    */
-//   async findOneCurrency(id: number) {
-//     const data = await this.currencyRepository.findOne({
-//       where: {
-//         id: id,
-//       },
-//       relations: ['users'],
-//     });
-//     if (!data) {
-//       throw new NotFoundException(`currency not exist in db!!`);
-//     }
-//     return data;
-//   }
-// }
+  /**
+   * Get One group
+   */
+  async findOneGroup(id: number) {
+    const data = await this.accountingGroupRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!data) {
+      throw new NotFoundException(`this accounting group not exist in db!!`);
+    }
+    return data;
+  }
+}

@@ -16,6 +16,8 @@ import { OrganizationsService } from './organization/organizations.service';
 import { OrganizationsController } from './organization/organizations.controller';
 import { OrganizationsEntity } from './organization/entity';
 import { AccountingGroupEntity } from './accounting-group/entity';
+import { AccountingGroupController } from './accounting-group/accounting-group.controller';
+import { AccountingGroupService } from './accounting-group/accounting-group.service';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -36,12 +38,14 @@ import { AccountingGroupEntity } from './accounting-group/entity';
     UserTypeController,
     LedgerController,
     OrganizationsController,
+    AccountingGroupController,
   ],
   providers: [
     UserService,
     UserTypeService,
     LedgersService,
     OrganizationsService,
+    AccountingGroupService,
   ],
   exports: [UserService, UserTypeService, LedgersService],
 })
