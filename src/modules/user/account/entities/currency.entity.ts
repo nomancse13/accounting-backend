@@ -1,17 +1,8 @@
 import { CommonEntity } from 'src/authentication/common';
-import {
-  SubscriptionStatusEnum,
-  UserTypesEnum,
-} from 'src/authentication/common/enum';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { LedgersEntity } from '../../ledgers/entity';
-import { UserEntity } from '../../entities';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from 'src/modules/user/entities';
+import { LedgersEntity } from '../ledgers/entity';
+import { BankAccountEntity } from '../../banking/entity';
 
 @Entity()
 export class CurrencyEntity extends CommonEntity {
@@ -52,4 +43,7 @@ export class CurrencyEntity extends CommonEntity {
 
   @OneToMany(() => UserEntity, (user) => user.currency)
   users: UserEntity[];
+
+  @OneToMany(() => BankAccountEntity, (banking) => banking.currency)
+  bankings: BankAccountEntity[];
 }

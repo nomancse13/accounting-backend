@@ -1,17 +1,5 @@
 import { CommonEntity } from 'src/authentication/common';
-import {
-  SubscriptionStatusEnum,
-  UserTypesEnum,
-} from 'src/authentication/common/enum';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { CurrencyEntity } from '../../currency/entity';
-import { UserEntity } from '../../entities';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class OrganizationsEntity extends CommonEntity {

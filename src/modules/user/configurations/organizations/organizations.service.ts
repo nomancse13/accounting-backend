@@ -12,8 +12,6 @@ import {
 import { OrganizationsEntity } from './entity';
 import { BaseRepository } from 'typeorm-transactional-cls-hooked';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CurrencyEntity } from '../currency/entity';
-import { decrypt } from 'src/helper/crypto.helper';
 import { ErrorMessage, UserTypesEnum } from 'src/authentication/common/enum';
 import { Brackets } from 'typeorm';
 import { CreateOrganizationsDto, UpdateOrganizationsDto } from './dtos';

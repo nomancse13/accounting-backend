@@ -15,6 +15,7 @@ import {
 import { LoggerMiddleware } from './authentication/middleware';
 import { QueueMailConsumer } from './modules/queue-mail/queue-mail.consumer';
 import { UserModule } from './modules/user/user.module';
+import { AccountModule } from './modules/user/account/account.module';
 
 @Module({
   imports: [
@@ -43,13 +44,14 @@ import { UserModule } from './modules/user/user.module';
     }),
     //module prefix for modules
     RouterModule.register([
-      //module prefix for admin
+      //module prefix for user
       {
         path: 'user',
         module: UserModule,
       },
       {
-        path: 'public',
+        path: 'user',
+        module: AccountModule,
       },
     ]),
     MulterModule.register({ dest: './uploads', storage: './uploads' }),

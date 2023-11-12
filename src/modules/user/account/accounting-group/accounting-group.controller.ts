@@ -28,7 +28,7 @@ import {
 } from 'src/authentication/common/interfaces';
 import { UserPayload } from 'src/authentication/utils/decorators';
 import { AccountingGroupService } from './accounting-group.service';
-import { UpdateOrganizationsDto } from '../organization/dtos';
+import { UpdateOrganizationsDto } from '../../configurations/organizations/dtos';
 
 @ApiTags('User|Accounting Group')
 @ApiBearerAuth('jwt')

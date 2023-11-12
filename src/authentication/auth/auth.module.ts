@@ -13,6 +13,7 @@ import { UserEntity } from 'src/modules/user/entities';
 import { UserModule } from 'src/modules/user/user.module';
 import { UserStrategy, RtStrategy } from './strategy';
 import { AppLoggerModule } from '../logger/app-logger.module';
+import { AccountModule } from 'src/modules/user/account/account.module';
 // import { AtStrategy, RtStrategy } from './strategy';
 
 @Module({
@@ -34,6 +35,7 @@ import { AppLoggerModule } from '../logger/app-logger.module';
     QueueMailModule,
     forwardRef(() => UserModule),
     AppLoggerModule,
+    AccountModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, RtStrategy, UserStrategy],

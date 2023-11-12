@@ -1,16 +1,9 @@
 /**dependencies */
 import { CommonEntity } from 'src/authentication/common';
-import { UserTypesEnum } from 'src/authentication/common/enum';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UserTypeEntity } from './user-type.entity';
-import { LedgersEntity } from '../ledgers/entity';
-import { CurrencyEntity } from '../currency/entity';
+import { LedgersEntity } from '../account/ledgers/entity';
+import { CurrencyEntity } from '../account/entities';
 /**common entity data */
 @Entity('user')
 export class UserEntity extends CommonEntity {

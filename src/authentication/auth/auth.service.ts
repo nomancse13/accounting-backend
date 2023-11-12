@@ -37,7 +37,7 @@ import { Brackets } from 'typeorm';
 import { PaginationDataDto } from '../common/dtos';
 import { v4 as uuidv4 } from 'uuid';
 import { UserTypeService } from 'src/modules/user/user-type/user-type.service';
-import { LedgersService } from 'src/modules/user/ledgers/ledgers.service';
+import { LedgersService } from 'src/modules/user/account/ledgers/ledgers.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -125,8 +125,6 @@ export class AuthService {
       loginDto.password,
       user.password,
     );
-
-    console.log(user, 'pppa');
 
     if (!passwordMatches) throw new ForbiddenException('Invalid password!');
     const tokens = await this.getTokens({

@@ -5,48 +5,57 @@ import { AuthModule } from 'src/authentication/auth/auth.module';
 import { QueueMailModule } from '../queue-mail/queue-mail.module';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { UserEntity, UserTypeEntity } from './entities';
+import { UserTypeEntity } from './entities';
 import { UserTypeController } from './user-type/user-type.controller';
 import { UserTypeService } from './user-type/user-type.service';
-import { LedgersEntity } from './ledgers/entity';
-import { LedgersService } from './ledgers/ledgers.service';
-import { LedgerController } from './ledgers/ledgers.controller';
-import { CurrencyEntity } from './currency/entity';
-import { OrganizationsService } from './organization/organizations.service';
-import { OrganizationsController } from './organization/organizations.controller';
-import { OrganizationsEntity } from './organization/entity';
-import { AccountingGroupEntity } from './accounting-group/entity';
-import { AccountingGroupController } from './accounting-group/accounting-group.controller';
-import { AccountingGroupService } from './accounting-group/accounting-group.service';
+import { AccountModule } from './account/account.module';
+import { BankAccountEntity } from './banking/entity';
+import { BankingController } from './banking/banking.controller';
+import { BankingService } from './banking/banking.service';
+import { OrganizationsEntity } from './configurations/organizations/entity';
+import { OrganizationsController } from './configurations/organizations/organizations.controller';
+import { OrganizationsService } from './configurations/organizations/organizations.service';
+import { MailConfigurationsEntity } from './configurations/entities/mailConfigurations.entity';
+import { CountryEntity } from './configurations/entities/country.entity';
+import { SuppliersEntity } from './supplier/entity';
+import { CustomersEntity } from './customers/entity';
+import { SuppliersController } from './supplier/suppliers.controller';
+import { SuppliersService } from './supplier/suppliers.service';
+import { CustomersService } from './customers/customers.service';
+import { CustomersController } from './customers/customers.controller';
 /**controllers */
 /**Authentication strategies */
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      UserEntity,
       UserTypeEntity,
-      LedgersEntity,
-      CurrencyEntity,
       OrganizationsEntity,
-      AccountingGroupEntity,
+      BankAccountEntity,
+      MailConfigurationsEntity,
+      CountryEntity,
+      SuppliersEntity,
+      CustomersEntity,
     ]),
     QueueMailModule,
+    AccountModule,
     forwardRef(() => AuthModule),
   ],
   controllers: [
     UserController,
     UserTypeController,
-    LedgerController,
     OrganizationsController,
-    AccountingGroupController,
+    BankingController,
+    SuppliersController,
+    CustomersController,
   ],
   providers: [
     UserService,
     UserTypeService,
-    LedgersService,
     OrganizationsService,
-    AccountingGroupService,
+    BankingService,
+    SuppliersService,
+    CustomersService,
   ],
-  exports: [UserService, UserTypeService, LedgersService],
+  exports: [UserService, UserTypeService],
 })
 export class UserModule {}

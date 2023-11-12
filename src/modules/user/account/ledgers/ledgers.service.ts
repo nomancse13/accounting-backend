@@ -13,10 +13,10 @@ import {
 import { LedgersEntity } from './entity';
 import { BaseRepository } from 'typeorm-transactional-cls-hooked';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CurrencyEntity } from '../currency/entity';
 import { decrypt } from 'src/helper/crypto.helper';
 import { ErrorMessage, UserTypesEnum } from 'src/authentication/common/enum';
 import { Brackets } from 'typeorm';
+import { CurrencyEntity } from '../entities';
 
 @Injectable()
 export class LedgersService {
@@ -162,6 +162,7 @@ export class LedgersService {
     if (!data) {
       throw new NotFoundException(`Ledger not exist in db!!`);
     }
+
     return data;
   }
   /**
