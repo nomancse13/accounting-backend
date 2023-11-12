@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from 'src/modules/user/entities';
 import { LedgersEntity } from '../ledgers/entity';
 import { BankAccountEntity } from '../../banking/entity';
+import { InvoiceEntity } from '../../invoice/entities';
 
 @Entity()
 export class CurrencyEntity extends CommonEntity {
@@ -46,4 +47,10 @@ export class CurrencyEntity extends CommonEntity {
 
   @OneToMany(() => BankAccountEntity, (banking) => banking.currency)
   bankings: BankAccountEntity[];
+
+  @OneToMany(() => InvoiceEntity, (invoice) => invoice.debitCurrencies)
+  invDebitCurr: InvoiceEntity[];
+
+  @OneToMany(() => InvoiceEntity, (invoice) => invoice.creditCurrencies)
+  invCreditCurr: InvoiceEntity[];
 }

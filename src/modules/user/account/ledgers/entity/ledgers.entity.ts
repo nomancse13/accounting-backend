@@ -10,6 +10,7 @@ import { UserEntity } from 'src/modules/user/entities';
 import { TransactionHistoryEntity } from '../../entities/transaction-history.entity';
 import { CurrencyEntity } from '../../entities';
 import { BankAccountEntity } from 'src/modules/user/banking/entity';
+import { InvoiceEntity } from 'src/modules/user/invoice/entities';
 
 @Entity()
 export class LedgersEntity extends CommonEntity {
@@ -58,4 +59,10 @@ export class LedgersEntity extends CommonEntity {
 
   @OneToMany(() => BankAccountEntity, (banking) => banking.ledger)
   bankings: BankAccountEntity[];
+
+  @OneToMany(() => InvoiceEntity, (invoice) => invoice.debitLedger)
+  invDebit: InvoiceEntity[];
+
+  @OneToMany(() => InvoiceEntity, (invoice) => invoice.creditLedger)
+  invCredit: InvoiceEntity[];
 }

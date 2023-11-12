@@ -163,7 +163,7 @@ export class AccountingGroupController {
     required: false,
   })
   @Get('get/all')
-  async apiPlanData(
+  async getAll(
     @Query() listQueryParam: PaginationOptionsInterface,
     @Query('filter') filter: any,
     @UserPayload() userPayload: UserInterface,

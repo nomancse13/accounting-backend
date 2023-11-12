@@ -24,31 +24,31 @@ import {
   UserInterface,
 } from 'src/authentication/common/interfaces';
 import { UserPayload } from 'src/authentication/utils/decorators';
-import { SuppliersService } from './suppliers.service';
-import { CreateSuppliersDto, UpdateSuppliersDto } from './dtos';
+import { InvoiceService } from './invoice.service';
+import { CreateInvoiceDto, UpdateInvoiceDto } from './dtos';
 
-@ApiTags('User|Suppliers')
+@ApiTags('User|Invoice')
 @ApiBearerAuth('jwt')
 @UseGuards(UserGuard)
 @Controller({
-  path: 'suppliers',
+  path: 'invoice',
   version: '1',
 })
-export class SuppliersController {
-  constructor(private suppliersService: SuppliersService) {}
+export class InvoiceController {
+  constructor(private invoiceService: InvoiceService) {}
 
-  //   create a new suppliers account
+  //   create a new invoice
   @ApiOperation({
-    summary: 'create suppliers by a user',
-    description: 'this route is responsible for create a suppliers',
+    summary: 'create invoice by a user',
+    description: 'this route is responsible for create a invoice',
   })
   @ApiBody({
-    type: CreateSuppliersDto,
+    type: CreateInvoiceDto,
     description:
-      'How to create a suppliers with body?... here is the example given below!',
+      'How to create a invoice with body?... here is the example given below!',
     examples: {
       a: {
-        summary: 'enter suppliers',
+        summary: 'enter invoice',
         value: {
           bankName: 'test11',
           currencyId: 1,
@@ -59,32 +59,32 @@ export class SuppliersController {
           openingBalance: 1000.2,
           accountType: 1000,
           description: 'test11',
-        } as unknown as CreateSuppliersDto,
+        } as unknown as CreateInvoiceDto,
       },
     },
   })
   @Post()
   async create(
-    @Body() createSuppliersDto: CreateSuppliersDto,
+    @Body() createInvoiceDto: CreateInvoiceDto,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const data = await this.suppliersService.createSuppliers(
-      createSuppliersDto,
+    const data = await this.invoiceService.createInvoice(
+      createInvoiceDto,
       userPayload,
     );
 
     return { message: 'successful!', result: data };
   }
 
-  // update a suppliers by id
+  // update a invoice by id
   @ApiOperation({
-    summary: 'update suppliers by id',
-    description: 'this route is responsible for update suppliers by id',
+    summary: 'update invoice by id',
+    description: 'this route is responsible for update invoice by id',
   })
   @ApiBody({
-    type: UpdateSuppliersDto,
+    type: UpdateInvoiceDto,
     description:
-      'How to update a suppliers by id?... here is the example given below!',
+      'How to update a invoice by id?... here is the example given below!',
     examples: {
       a: {
         summary: 'default',
@@ -105,45 +105,45 @@ export class SuppliersController {
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'for update a suppliers required id',
+    description: 'for update a invoice required id',
     required: true,
   })
   @Patch(':id')
   async update(
-    @Body() updateSuppliersDto: UpdateSuppliersDto,
+    @Body() updateInvoiceDto: UpdateInvoiceDto,
     @UserPayload() userPayload: UserInterface,
     @Param('id') id: number,
   ) {
-    const data = await this.suppliersService.updateSuppliers(
-      updateSuppliersDto,
+    const data = await this.invoiceService.updateInvoice(
+      updateInvoiceDto,
       userPayload,
       id,
     );
     return { message: 'successful!', result: data };
   }
 
-  // find single suppliers account
+  // find single invoice
   @ApiOperation({
-    summary: 'find single suppliers by id',
-    description: 'this route is responsible for find single suppliers by id',
+    summary: 'find single invoice by id',
+    description: 'this route is responsible for find single invoice by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'find single suppliers required id',
+    description: 'find single invoice required id',
     required: true,
   })
   @Get(':id')
-  async findSingleSuppliers(@Param('id') id: number) {
-    const data = await this.suppliersService.findOneSupplier(id);
+  async findSingleInvoice(@Param('id') id: number) {
+    const data = await this.invoiceService.findOneInvoice(id);
     return { message: 'successful!', result: data };
   }
 
-  // get all suppliers data with paginaiton
+  // get all invoice data with paginaiton
   @ApiOperation({
-    summary: 'get all suppliers data with pagination',
+    summary: 'get all invoice data with pagination',
     description:
-      'this route is responsible for getting all suppliers data with pagination',
+      'this route is responsible for getting all invoice data with pagination',
   })
   @ApiQuery({
     name: 'limit',
@@ -164,12 +164,12 @@ export class SuppliersController {
     required: false,
   })
   @Get('get/all')
-  async getAll(
+  async getAllInvoice(
     @Query() listQueryParam: PaginationOptionsInterface,
     @Query('filter') filter: any,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const result = await this.suppliersService.findAllSuppliersData(
+    const result = await this.invoiceService.findAllInvoiceData(
       listQueryParam,
       filter,
       userPayload,
@@ -178,21 +178,21 @@ export class SuppliersController {
     return { message: 'successful', result: result };
   }
 
-  // delete single suppliers account
+  // delete single invoice account
   @ApiOperation({
-    summary: 'delete single suppliers account by id',
+    summary: 'delete single invoice account by id',
     description:
-      'this route is responsible for delete single suppliers account by id',
+      'this route is responsible for delete single invoice account by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'delete single suppliers account required id',
+    description: 'delete single invoice account required id',
     required: true,
   })
   @Delete(':id')
   async deleteSuppliers(@Param('id') id: number) {
-    const data = await this.suppliersService.deleteSupplier(id);
+    const data = await this.invoiceService.deleteInvoice(id);
     return { message: 'successful!', result: data };
   }
 }
