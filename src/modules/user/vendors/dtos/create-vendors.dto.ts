@@ -1,16 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class CreateCustormersDto {
+export class CreateVendorsDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  customerCode: string;
+  vendorCode: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  customerName: string;
+  vendorName: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -40,15 +40,15 @@ export class CreateCustormersDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  supplierledgerId: number;
+  supplierledgerId1: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  customerledgerId1: number;
+  customerledgerId: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  customerledgerId2: number;
+  supplierledgerId2: number;
 }

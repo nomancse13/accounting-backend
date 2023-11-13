@@ -26,6 +26,9 @@ import { CustomersController } from './customers/customers.controller';
 import { InvoiceService } from './invoice/invoice.service';
 import { InvoiceController } from './invoice/invoice.controller';
 import { InvoiceEntity } from './invoice/entities';
+import { VendorsController } from './vendors/vendors.controller';
+import { VendorsService } from './vendors/vendors.service';
+import { VendorsEntity } from './vendors/entity';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -39,6 +42,7 @@ import { InvoiceEntity } from './invoice/entities';
       SuppliersEntity,
       CustomersEntity,
       InvoiceEntity,
+      VendorsEntity,
     ]),
     QueueMailModule,
     AccountModule,
@@ -52,6 +56,7 @@ import { InvoiceEntity } from './invoice/entities';
     SuppliersController,
     CustomersController,
     InvoiceController,
+    VendorsController,
   ],
   providers: [
     UserService,
@@ -61,6 +66,7 @@ import { InvoiceEntity } from './invoice/entities';
     SuppliersService,
     CustomersService,
     InvoiceService,
+    VendorsService,
   ],
   exports: [UserService, UserTypeService],
 })

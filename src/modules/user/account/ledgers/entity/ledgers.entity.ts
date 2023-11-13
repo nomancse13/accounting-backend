@@ -11,6 +11,7 @@ import { TransactionHistoryEntity } from '../../entities/transaction-history.ent
 import { CurrencyEntity } from '../../entities';
 import { BankAccountEntity } from 'src/modules/user/banking/entity';
 import { InvoiceEntity } from 'src/modules/user/invoice/entities';
+import { VendorsEntity } from 'src/modules/user/vendors/entity';
 
 @Entity()
 export class LedgersEntity extends CommonEntity {
@@ -65,4 +66,7 @@ export class LedgersEntity extends CommonEntity {
 
   @OneToMany(() => InvoiceEntity, (invoice) => invoice.creditLedger)
   invCredit: InvoiceEntity[];
+
+  @OneToMany(() => VendorsEntity, (vendors) => vendors.ledger)
+  vendors: VendorsEntity[];
 }
