@@ -37,6 +37,9 @@ import { VendorsEntity } from './vendors/entity';
 import { PurchaseEntity } from './purchase/entity';
 import { PurchaseController } from './purchase/purchase.controller';
 import { PurchaseService } from './purchase/purchase.service';
+import { SalesEntity } from './sales/entity';
+import { SalesController } from './sales/sales.controller';
+import { SalesService } from './sales/sales.service';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -55,6 +58,7 @@ import { PurchaseService } from './purchase/purchase.service';
       DeviceHistoryEntity,
       LoginHistoryEntity,
       PurchaseEntity,
+      SalesEntity,
     ]),
     QueueMailModule,
     AccountModule,
@@ -70,6 +74,7 @@ import { PurchaseService } from './purchase/purchase.service';
     InvoiceController,
     VendorsController,
     PurchaseController,
+    SalesController,
   ],
   providers: [
     UserService,
@@ -81,6 +86,7 @@ import { PurchaseService } from './purchase/purchase.service';
     InvoiceService,
     VendorsService,
     PurchaseService,
+    SalesService,
   ],
   exports: [UserService, UserTypeService],
 })

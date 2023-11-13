@@ -211,7 +211,7 @@ export class InvoiceController {
     required: true,
   })
   @Delete(':id')
-  async deleteSuppliers(@Param('id') id: number) {
+  async deleteInvoice(@Param('id') id: number) {
     const data = await this.invoiceService.deleteInvoice(id);
     return { message: 'successful!', result: data };
   }

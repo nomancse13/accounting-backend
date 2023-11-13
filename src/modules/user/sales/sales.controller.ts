@@ -24,90 +24,90 @@ import {
   UserInterface,
 } from 'src/authentication/common/interfaces';
 import { UserPayload } from 'src/authentication/utils/decorators';
-import { PurchaseService } from './purchase.service';
-import { CreatePurchaseDto, UpdatePurchaseDto } from './dtos';
+import { SalesService } from './sales.service';
+import { CreateSalesDto, UpdateSalesDto } from './dtos';
 
-@ApiTags('User|Purchase')
+@ApiTags('User|Sales')
 @ApiBearerAuth('jwt')
 @UseGuards(UserGuard)
 @Controller({
-  path: 'purchase',
+  path: 'sales',
   version: '1',
 })
-export class PurchaseController {
-  constructor(private purchaseService: PurchaseService) {}
+export class SalesController {
+  constructor(private salesService: SalesService) {}
 
-  //   create a new purchase
+  //   create a new sales
   @ApiOperation({
-    summary: 'create purchase by a user',
-    description: 'this route is responsible for create a purchase',
+    summary: 'create sales by a user',
+    description: 'this route is responsible for create a sales',
   })
   @ApiBody({
-    type: CreatePurchaseDto,
+    type: CreateSalesDto,
     description:
-      'How to create a purchase with body?... here is the example given below!',
+      'How to create a sales with body?... here is the example given below!',
     examples: {
       a: {
-        summary: 'enter purchase',
+        summary: 'enter sales',
         value: {
-          cashPurchaseNo: 'jsdhfdo',
+          cashSaleNo: 'jsdhfdo',
           transactionID: 'noman',
           reference: '0192938283',
           comment: 'jamn',
           payementStatus: 'syedpur',
-          purchaseAmount: 1,
+          saleAmount: 1,
           paidAmount: 6,
           conversionRate: 6,
           reverseRate: 6,
-          paidcurrencyId: 6,
-          purchasecurrencyId: 6,
+          paidcurrencyId: 1,
+          salecurrencyId: 1,
           bankledgerId: 6,
-          purchaseledgerId: 6,
-          supplierledgerId: 6,
-        } as unknown as CreatePurchaseDto,
+          debitledgerId: 6,
+          salesledgerId: 6,
+        } as unknown as CreateSalesDto,
       },
     },
   })
   @Post()
   async create(
-    @Body() createPurchaseDto: CreatePurchaseDto,
+    @Body() createSalesDto: CreateSalesDto,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const data = await this.purchaseService.createPurchase(
-      createPurchaseDto,
+    const data = await this.salesService.createSales(
+      createSalesDto,
       userPayload,
     );
 
     return { message: 'successful!', result: data };
   }
 
-  // update a purchase by id
+  // update a sales by id
   @ApiOperation({
-    summary: 'update purchase by id',
-    description: 'this route is responsible for update purchase by id',
+    summary: 'update sales by id',
+    description: 'this route is responsible for update sales by id',
   })
   @ApiBody({
-    type: UpdatePurchaseDto,
+    type: UpdateSalesDto,
     description:
-      'How to update a purchase by id?... here is the example given below!',
+      'How to update a sales by id?... here is the example given below!',
     examples: {
       a: {
         summary: 'default',
         value: {
-          cashPurchaseNo: 'jsdhfdo',
+          cashSaleNo: 'jsdhfdo',
           transactionID: 'noman',
           reference: '0192938283',
           comment: 'jamn',
           payementStatus: 'syedpur',
-          purchaseAmount: 1,
+          saleAmount: 1,
           paidAmount: 6,
           conversionRate: 6,
           reverseRate: 6,
-          paidcurrencyId: 6,
-          purchasecurrencyId: 6,
+          paidcurrencyId: 1,
+          salecurrencyId: 1,
           bankledgerId: 6,
-          purchaseledgerId: 6,
-          supplierledgerId: 6,
+          debitledgerId: 6,
+          salesledgerId: 6,
         },
       },
     },
@@ -115,45 +115,45 @@ export class PurchaseController {
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'for update a purchase required id',
+    description: 'for update a sales required id',
     required: true,
   })
   @Patch(':id')
   async update(
-    @Body() updatePurchaseDto: UpdatePurchaseDto,
+    @Body() updateSalesDto: UpdateSalesDto,
     @UserPayload() userPayload: UserInterface,
     @Param('id') id: number,
   ) {
-    const data = await this.purchaseService.updatePurchase(
-      updatePurchaseDto,
+    const data = await this.salesService.updateSales(
+      updateSalesDto,
       userPayload,
       id,
     );
     return { message: 'successful!', result: data };
   }
 
-  // find single purchase account
+  // find single sales account
   @ApiOperation({
-    summary: 'find single purchase by id',
-    description: 'this route is responsible for find single purchase by id',
+    summary: 'find single sales by id',
+    description: 'this route is responsible for find single sales by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'find single purchase required id',
+    description: 'find single sales required id',
     required: true,
   })
   @Get(':id')
-  async findSinglePurchase(@Param('id') id: number) {
-    const data = await this.purchaseService.findOnePurchase(id);
+  async findSingleSales(@Param('id') id: number) {
+    const data = await this.salesService.findOneSalesData(id);
     return { message: 'successful!', result: data };
   }
 
-  // get all purchase data with paginaiton
+  // get all sales data with paginaiton
   @ApiOperation({
-    summary: 'get all purchase data with pagination',
+    summary: 'get all sales data with pagination',
     description:
-      'this route is responsible for getting all purchase data with pagination',
+      'this route is responsible for getting all sales data with pagination',
   })
   @ApiQuery({
     name: 'limit',
@@ -179,7 +179,7 @@ export class PurchaseController {
     @Query('filter') filter: any,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const result = await this.purchaseService.findAllPurchaseData(
+    const result = await this.salesService.findAllSalesData(
       listQueryParam,
       filter,
       userPayload,
@@ -188,20 +188,20 @@ export class PurchaseController {
     return { message: 'successful', result: result };
   }
 
-  // delete single purchase
+  // delete single sales
   @ApiOperation({
-    summary: 'delete single purchase by id',
-    description: 'this route is responsible for delete single purchase by id',
+    summary: 'delete single sales by id',
+    description: 'this route is responsible for delete single sales by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'delete single purchase required id',
+    description: 'delete single sales required id',
     required: true,
   })
   @Delete(':id')
-  async deletePurchase(@Param('id') id: number) {
-    const data = await this.purchaseService.deletePurchase(id);
+  async deleteSales(@Param('id') id: number) {
+    const data = await this.salesService.deleteSales(id);
     return { message: 'successful!', result: data };
   }
 }

@@ -8,6 +8,7 @@ import { VendorsEntity } from '../../vendors/entity';
 import { PurchaseEntity } from '../../purchase/entity';
 import { SuppliersEntity } from '../../supplier/entity';
 import { CustomersEntity } from '../../customers/entity';
+import { SalesEntity } from '../../sales/entity';
 
 @Entity()
 export class CurrencyEntity extends CommonEntity {
@@ -69,6 +70,12 @@ export class CurrencyEntity extends CommonEntity {
 
   @OneToMany(() => PurchaseEntity, (purchase) => purchase.purchasecurrencies)
   purchase: PurchaseEntity[];
+
+  @OneToMany(() => SalesEntity, (paidSales) => paidSales.paidcurrencies)
+  paidSales: SalesEntity[];
+
+  @OneToMany(() => SalesEntity, (sales) => sales.salecurrencies)
+  sales: SalesEntity[];
 
   @OneToMany(
     () => SuppliersEntity,

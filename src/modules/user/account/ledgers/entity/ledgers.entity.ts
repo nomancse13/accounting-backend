@@ -15,6 +15,7 @@ import { VendorsEntity } from 'src/modules/user/vendors/entity';
 import { PurchaseEntity } from 'src/modules/user/purchase/entity';
 import { SuppliersEntity } from 'src/modules/user/supplier/entity';
 import { CustomersEntity } from 'src/modules/user/customers/entity';
+import { SalesEntity } from 'src/modules/user/sales/entity';
 
 @Entity()
 export class LedgersEntity extends CommonEntity {
@@ -102,6 +103,15 @@ export class LedgersEntity extends CommonEntity {
 
   @OneToMany(() => PurchaseEntity, (purchaseBank) => purchaseBank.bankledger)
   purchaseBank: PurchaseEntity[];
+
+  @OneToMany(() => SalesEntity, (salesDebit) => salesDebit.debitledger)
+  salesDebit: SalesEntity[];
+
+  @OneToMany(() => SalesEntity, (sales) => sales.salesledger)
+  sales: SalesEntity[];
+
+  @OneToMany(() => SalesEntity, (salesBank) => salesBank.bankledger)
+  salesBank: SalesEntity[];
 
   @OneToMany(() => SuppliersEntity, (supplierLedger) => supplierLedger.ledger)
   supplierLedger: SuppliersEntity[];

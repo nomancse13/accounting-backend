@@ -1,16 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class CreatePurchaseDto {
+export class CreateSalesDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  cashPurchaseNo: string;
+  cashSaleNo: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  purhaseSaleDate: string;
+  cashSaleDate: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -35,7 +35,7 @@ export class CreatePurchaseDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  purchaseAmount: number;
+  saleAmount: number;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -60,17 +60,17 @@ export class CreatePurchaseDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  purchasecurrencyId: number;
+  salecurrencyId: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  supplierledgerId: number;
+  debitledgerId: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  purchaseledgerId: number;
+  salesledgerId: number;
 
   @ApiProperty()
   @IsNotEmpty()
