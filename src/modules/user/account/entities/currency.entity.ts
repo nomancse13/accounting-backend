@@ -5,6 +5,9 @@ import { LedgersEntity } from '../ledgers/entity';
 import { BankAccountEntity } from '../../banking/entity';
 import { InvoiceEntity } from '../../invoice/entities';
 import { VendorsEntity } from '../../vendors/entity';
+import { PurchaseEntity } from '../../purchase/entity';
+import { SuppliersEntity } from '../../supplier/entity';
+import { CustomersEntity } from '../../customers/entity';
 
 @Entity()
 export class CurrencyEntity extends CommonEntity {
@@ -37,7 +40,7 @@ export class CurrencyEntity extends CommonEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   closingBalance: number;
 
-  @Column({ type: 'timestamp', nullable: true, default: () => 'NOW()' })
+  @Column({ type: 'timestamp', default: () => 'NOW()' })
   executionDate: Date;
 
   @OneToMany(() => LedgersEntity, (ledger) => ledger.currency)
@@ -57,4 +60,22 @@ export class CurrencyEntity extends CommonEntity {
 
   @OneToMany(() => VendorsEntity, (vendors) => vendors.currency)
   vendors: VendorsEntity[];
+
+  @OneToMany(
+    () => PurchaseEntity,
+    (paidPurchase) => paidPurchase.paidcurrencies,
+  )
+  paidPurchase: PurchaseEntity[];
+
+  @OneToMany(() => PurchaseEntity, (purchase) => purchase.purchasecurrencies)
+  purchase: PurchaseEntity[];
+
+  @OneToMany(
+    () => SuppliersEntity,
+    (supplierCurrency) => supplierCurrency.currency,
+  )
+  supplierCurrency: SuppliersEntity[];
+
+  @OneToMany(() => CustomersEntity, (customers) => customers.currency)
+  customers: CustomersEntity[];
 }

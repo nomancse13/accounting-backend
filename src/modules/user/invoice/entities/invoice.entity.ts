@@ -20,7 +20,7 @@ export class InvoiceEntity extends CommonEntity {
   @Column({ type: 'varchar', length: 255 })
   comment: string;
 
-  @Column({ type: 'timestamp', nullable: true, default: () => 'NOW()' })
+  @Column({ type: 'timestamp', default: () => 'NOW()' })
   invoiceDate: Date;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

@@ -26,12 +26,12 @@ export class SuppliersEntity extends CommonEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   address: string;
 
-  @ManyToOne(() => CurrencyEntity, (currency) => currency.bankings, {
+  @ManyToOne(() => CurrencyEntity, (currency) => currency.supplierCurrency, {
     onDelete: 'RESTRICT',
   })
   currency: CurrencyEntity;
 
-  @ManyToOne(() => LedgersEntity, (ledger) => ledger.bankings, {
+  @ManyToOne(() => LedgersEntity, (ledger) => ledger.supplierLedger, {
     onDelete: 'RESTRICT',
   })
   ledger: LedgersEntity;

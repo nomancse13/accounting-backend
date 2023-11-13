@@ -36,14 +36,18 @@ export class VendorsEntity extends CommonEntity {
   })
   ledger: LedgersEntity;
 
-  @ManyToOne(() => LedgersEntity, (customerledger) => customerledger.vendors, {
-    onDelete: 'RESTRICT',
-  })
+  @ManyToOne(
+    () => LedgersEntity,
+    (customerledger) => customerledger.vendorsCustom,
+    {
+      onDelete: 'RESTRICT',
+    },
+  )
   customerledger: LedgersEntity;
 
   @ManyToOne(
     () => LedgersEntity,
-    (supplierledger1) => supplierledger1.vendors,
+    (supplierledger1) => supplierledger1.vendorsSupplier1,
     {
       onDelete: 'RESTRICT',
     },
@@ -52,7 +56,7 @@ export class VendorsEntity extends CommonEntity {
 
   @ManyToOne(
     () => LedgersEntity,
-    (supplierledger2) => supplierledger2.vendors,
+    (supplierledger2) => supplierledger2.vendorsSupplier2,
     {
       onDelete: 'RESTRICT',
     },

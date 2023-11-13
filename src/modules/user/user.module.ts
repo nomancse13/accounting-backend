@@ -5,7 +5,12 @@ import { AuthModule } from 'src/authentication/auth/auth.module';
 import { QueueMailModule } from '../queue-mail/queue-mail.module';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { UserTypeEntity } from './entities';
+import {
+  CalenderDataEntity,
+  DeviceHistoryEntity,
+  LoginHistoryEntity,
+  UserTypeEntity,
+} from './entities';
 import { UserTypeController } from './user-type/user-type.controller';
 import { UserTypeService } from './user-type/user-type.service';
 import { AccountModule } from './account/account.module';
@@ -29,6 +34,9 @@ import { InvoiceEntity } from './invoice/entities';
 import { VendorsController } from './vendors/vendors.controller';
 import { VendorsService } from './vendors/vendors.service';
 import { VendorsEntity } from './vendors/entity';
+import { PurchaseEntity } from './purchase/entity';
+import { PurchaseController } from './purchase/purchase.controller';
+import { PurchaseService } from './purchase/purchase.service';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -43,6 +51,10 @@ import { VendorsEntity } from './vendors/entity';
       CustomersEntity,
       InvoiceEntity,
       VendorsEntity,
+      CalenderDataEntity,
+      DeviceHistoryEntity,
+      LoginHistoryEntity,
+      PurchaseEntity,
     ]),
     QueueMailModule,
     AccountModule,
@@ -57,6 +69,7 @@ import { VendorsEntity } from './vendors/entity';
     CustomersController,
     InvoiceController,
     VendorsController,
+    PurchaseController,
   ],
   providers: [
     UserService,
@@ -67,6 +80,7 @@ import { VendorsEntity } from './vendors/entity';
     CustomersService,
     InvoiceService,
     VendorsService,
+    PurchaseService,
   ],
   exports: [UserService, UserTypeService],
 })

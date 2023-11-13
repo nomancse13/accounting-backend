@@ -12,6 +12,9 @@ import { CurrencyEntity } from '../../entities';
 import { BankAccountEntity } from 'src/modules/user/banking/entity';
 import { InvoiceEntity } from 'src/modules/user/invoice/entities';
 import { VendorsEntity } from 'src/modules/user/vendors/entity';
+import { PurchaseEntity } from 'src/modules/user/purchase/entity';
+import { SuppliersEntity } from 'src/modules/user/supplier/entity';
+import { CustomersEntity } from 'src/modules/user/customers/entity';
 
 @Entity()
 export class LedgersEntity extends CommonEntity {
@@ -69,4 +72,58 @@ export class LedgersEntity extends CommonEntity {
 
   @OneToMany(() => VendorsEntity, (vendors) => vendors.ledger)
   vendors: VendorsEntity[];
+
+  @OneToMany(
+    () => VendorsEntity,
+    (vendorsCustom) => vendorsCustom.customerledger,
+  )
+  vendorsCustom: VendorsEntity[];
+
+  @OneToMany(
+    () => VendorsEntity,
+    (vendorsSupplier1) => vendorsSupplier1.supplierledger1,
+  )
+  vendorsSupplier1: VendorsEntity[];
+
+  @OneToMany(
+    () => VendorsEntity,
+    (vendorsSupplier2) => vendorsSupplier2.supplierledger2,
+  )
+  vendorsSupplier2: VendorsEntity[];
+
+  @OneToMany(
+    () => PurchaseEntity,
+    (purchaseSupply) => purchaseSupply.supplierledger,
+  )
+  purchaseSupply: PurchaseEntity[];
+
+  @OneToMany(() => PurchaseEntity, (purchase) => purchase.purchaseledger)
+  purchase: PurchaseEntity[];
+
+  @OneToMany(() => PurchaseEntity, (purchaseBank) => purchaseBank.bankledger)
+  purchaseBank: PurchaseEntity[];
+
+  @OneToMany(() => SuppliersEntity, (supplierLedger) => supplierLedger.ledger)
+  supplierLedger: SuppliersEntity[];
+
+  @OneToMany(() => CustomersEntity, (customers) => customers.ledger)
+  customers: CustomersEntity[];
+
+  @OneToMany(
+    () => CustomersEntity,
+    (customerSupply) => customerSupply.supplierledger,
+  )
+  customerSupply: CustomersEntity[];
+
+  @OneToMany(
+    () => CustomersEntity,
+    (customersLedger1) => customersLedger1.customerledger1,
+  )
+  customersLedger1: CustomersEntity[];
+
+  @OneToMany(
+    () => CustomersEntity,
+    (customersLedger2) => customersLedger2.customerledger2,
+  )
+  customersLedger2: CustomersEntity[];
 }

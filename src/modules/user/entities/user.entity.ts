@@ -1,9 +1,17 @@
 /**dependencies */
 import { CommonEntity } from 'src/authentication/common';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserTypeEntity } from './user-type.entity';
 import { LedgersEntity } from '../account/ledgers/entity';
 import { CurrencyEntity } from '../account/entities';
+import { DeviceHistoryEntity } from './devices-history.entity';
+import { LoginHistoryEntity } from './login-history.entity';
 /**common entity data */
 @Entity('user')
 export class UserEntity extends CommonEntity {
@@ -40,7 +48,7 @@ export class UserEntity extends CommonEntity {
   @Column({ type: 'varchar', length: '255', nullable: true, select: false })
   passResetToken: string;
 
-  @Column({ type: 'timestamp', nullable: true, select: false })
+  @Column({ type: 'timestamp', select: false })
   passResetTokenExpireAt: Date;
 
   @Column({ type: 'uuid', nullable: true })
@@ -60,4 +68,10 @@ export class UserEntity extends CommonEntity {
     onDelete: 'RESTRICT',
   })
   ledger: LedgersEntity;
+
+  @OneToMany(() => DeviceHistoryEntity, (devices) => devices.user)
+  devices: DeviceHistoryEntity[];
+
+  @OneToMany(() => LoginHistoryEntity, (login) => login.user)
+  login: LoginHistoryEntity[];
 }

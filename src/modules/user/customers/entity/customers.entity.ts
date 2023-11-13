@@ -26,27 +26,27 @@ export class CustomersEntity extends CommonEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   address: string;
 
-  @ManyToOne(() => CurrencyEntity, (currency) => currency.bankings, {
+  @ManyToOne(() => CurrencyEntity, (currency) => currency.customers, {
     onDelete: 'RESTRICT',
   })
   currency: CurrencyEntity;
 
-  @ManyToOne(() => LedgersEntity, (ledger) => ledger.bankings, {
+  @ManyToOne(() => LedgersEntity, (ledger) => ledger.customers, {
     onDelete: 'RESTRICT',
   })
   ledger: LedgersEntity;
 
-  @ManyToOne(() => LedgersEntity, (ledger) => ledger.bankings, {
+  @ManyToOne(() => LedgersEntity, (ledger) => ledger.customerSupply, {
     onDelete: 'RESTRICT',
   })
   supplierledger: LedgersEntity;
 
-  @ManyToOne(() => LedgersEntity, (ledger) => ledger.bankings, {
+  @ManyToOne(() => LedgersEntity, (ledger) => ledger.customersLedger1, {
     onDelete: 'RESTRICT',
   })
   customerledger1: LedgersEntity;
 
-  @ManyToOne(() => LedgersEntity, (ledger) => ledger.bankings, {
+  @ManyToOne(() => LedgersEntity, (ledger) => ledger.customersLedger2, {
     onDelete: 'RESTRICT',
   })
   customerledger2: LedgersEntity;
