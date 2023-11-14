@@ -23,11 +23,8 @@ import { OrganizationsService } from './configurations/organizations/organizatio
 import { MailConfigurationsEntity } from './configurations/entities/mailConfigurations.entity';
 import { CountryEntity } from './configurations/entities/country.entity';
 import { SuppliersEntity } from './supplier/entity';
-import { CustomersEntity } from './customers/entity';
 import { SuppliersController } from './supplier/suppliers.controller';
 import { SuppliersService } from './supplier/suppliers.service';
-import { CustomersService } from './customers/customers.service';
-import { CustomersController } from './customers/customers.controller';
 import { InvoiceService } from './invoice/invoice.service';
 import { InvoiceController } from './invoice/invoice.controller';
 import { InvoiceEntity } from './invoice/entities';
@@ -44,6 +41,7 @@ import { HumanResourceModule } from './human-resource/human-resource.module';
 import { ServiceEntity } from './service/entity';
 import { ServiceController } from './service/service.controller';
 import { ItemService } from './service/item.service';
+import { ReceivablesModule } from './receivables/receivables.module';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -55,7 +53,6 @@ import { ItemService } from './service/item.service';
       MailConfigurationsEntity,
       CountryEntity,
       SuppliersEntity,
-      CustomersEntity,
       InvoiceEntity,
       VendorsEntity,
       CalenderDataEntity,
@@ -68,6 +65,7 @@ import { ItemService } from './service/item.service';
     QueueMailModule,
     AccountModule,
     HumanResourceModule,
+    ReceivablesModule,
     forwardRef(() => AuthModule),
   ],
   controllers: [
@@ -76,7 +74,6 @@ import { ItemService } from './service/item.service';
     OrganizationsController,
     BankingController,
     SuppliersController,
-    CustomersController,
     InvoiceController,
     VendorsController,
     PurchaseController,
@@ -89,7 +86,6 @@ import { ItemService } from './service/item.service';
     OrganizationsService,
     BankingService,
     SuppliersService,
-    CustomersService,
     InvoiceService,
     VendorsService,
     PurchaseService,

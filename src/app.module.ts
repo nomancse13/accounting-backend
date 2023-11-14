@@ -17,6 +17,7 @@ import { QueueMailConsumer } from './modules/queue-mail/queue-mail.consumer';
 import { UserModule } from './modules/user/user.module';
 import { AccountModule } from './modules/user/account/account.module';
 import { HumanResourceModule } from './modules/user/human-resource/human-resource.module';
+import { ReceivablesModule } from './modules/user/receivables/receivables.module';
 
 @Module({
   imports: [
@@ -57,6 +58,10 @@ import { HumanResourceModule } from './modules/user/human-resource/human-resourc
       {
         path: 'user',
         module: HumanResourceModule,
+      },
+      {
+        path: 'user',
+        module: ReceivablesModule,
       },
     ]),
     MulterModule.register({ dest: './uploads', storage: './uploads' }),

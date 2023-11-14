@@ -7,8 +7,8 @@ import { InvoiceEntity } from '../../invoice/entities';
 import { VendorsEntity } from '../../vendors/entity';
 import { PurchaseEntity } from '../../purchase/entity';
 import { SuppliersEntity } from '../../supplier/entity';
-import { CustomersEntity } from '../../customers/entity';
 import { SalesEntity } from '../../sales/entity';
+import { CustomersEntity } from '../../receivables/customers/entity';
 
 @Entity()
 export class CurrencyEntity extends CommonEntity {

@@ -15,7 +15,7 @@ import { ErrorMessage, UserTypesEnum } from 'src/authentication/common/enum';
 import { Brackets } from 'typeorm';
 import { CreateCustormersDto, UpdateCustomersDto } from './dtos';
 import { CustomersEntity } from './entity';
-import { LedgersService } from '../account/ledgers/ledgers.service';
+import { LedgersService } from '../../account/ledgers/ledgers.service';
 
 @Injectable()
 export class CustomersService {

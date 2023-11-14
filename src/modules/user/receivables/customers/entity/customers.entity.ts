@@ -1,7 +1,14 @@
 import { CommonEntity } from 'src/authentication/common';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { CurrencyEntity } from '../../account/entities';
-import { LedgersEntity } from '../../account/ledgers/entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { SaleVoucherEntity } from '../../sale-voucher/entity';
+import { CurrencyEntity } from 'src/modules/user/account/entities';
+import { LedgersEntity } from 'src/modules/user/account/ledgers/entity';
 
 @Entity()
 export class CustomersEntity extends CommonEntity {
@@ -50,4 +57,7 @@ export class CustomersEntity extends CommonEntity {
     onDelete: 'RESTRICT',
   })
   customerledger2: LedgersEntity;
+
+  @OneToMany(() => SaleVoucherEntity, (sales) => sales.customer)
+  sales: SaleVoucherEntity[];
 }

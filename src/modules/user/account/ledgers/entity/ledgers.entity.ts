@@ -14,8 +14,8 @@ import { InvoiceEntity } from 'src/modules/user/invoice/entities';
 import { VendorsEntity } from 'src/modules/user/vendors/entity';
 import { PurchaseEntity } from 'src/modules/user/purchase/entity';
 import { SuppliersEntity } from 'src/modules/user/supplier/entity';
-import { CustomersEntity } from 'src/modules/user/customers/entity';
 import { SalesEntity } from 'src/modules/user/sales/entity';
+import { CustomersEntity } from 'src/modules/user/receivables/customers/entity';
 
 @Entity()
 export class LedgersEntity extends CommonEntity {
