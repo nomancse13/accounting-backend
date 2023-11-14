@@ -9,6 +9,7 @@ import {
 import { SaleVoucherEntity } from '../../sale-voucher/entity';
 import { CurrencyEntity } from 'src/modules/user/account/entities';
 import { LedgersEntity } from 'src/modules/user/account/ledgers/entity';
+import { ReceiptEntity } from '../../money-receipt/entity';
 
 @Entity()
 export class CustomersEntity extends CommonEntity {
@@ -60,4 +61,7 @@ export class CustomersEntity extends CommonEntity {
 
   @OneToMany(() => SaleVoucherEntity, (sales) => sales.customer)
   sales: SaleVoucherEntity[];
+
+  @OneToMany(() => ReceiptEntity, (receipts) => receipts.customer)
+  receipts: ReceiptEntity[];
 }

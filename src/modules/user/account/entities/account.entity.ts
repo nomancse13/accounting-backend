@@ -1,5 +1,6 @@
 import { CommonEntity } from 'src/authentication/common';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ReceiptEntity } from '../../receivables/money-receipt/entity';
 
 @Entity()
 export class AccountEntity extends CommonEntity {
@@ -20,4 +21,7 @@ export class AccountEntity extends CommonEntity {
 
   @Column({ type: 'bigint', nullable: true })
   parentId: number;
+
+  @OneToMany(() => ReceiptEntity, (receipts) => receipts.customer)
+  receipts: ReceiptEntity[];
 }

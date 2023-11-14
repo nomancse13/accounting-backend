@@ -8,16 +8,23 @@ import { CustomersEntity } from './customers/entity';
 import { CustomersController } from './customers/customers.controller';
 import { CustomersService } from './customers/customers.service';
 import { AccountModule } from '../account/account.module';
+import { ReceiptEntity } from './money-receipt/entity';
+import { ReceiptController } from './money-receipt/receipt.controller';
+import { ReceiptService } from './money-receipt/receipt.service';
 
 /**Module */
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SaleVoucherEntity, CustomersEntity]),
+    TypeOrmModule.forFeature([
+      SaleVoucherEntity,
+      CustomersEntity,
+      ReceiptEntity,
+    ]),
     forwardRef(() => UserModule),
     AccountModule,
   ],
-  controllers: [SaleVoucherController, CustomersController],
-  providers: [SaleVoucherService, CustomersService],
-  exports: [SaleVoucherService, CustomersService],
+  controllers: [SaleVoucherController, CustomersController, ReceiptController],
+  providers: [SaleVoucherService, CustomersService, ReceiptService],
+  exports: [SaleVoucherService, CustomersService, ReceiptService],
 })
 export class ReceivablesModule {}
