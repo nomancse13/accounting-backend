@@ -16,6 +16,7 @@ import { LoggerMiddleware } from './authentication/middleware';
 import { QueueMailConsumer } from './modules/queue-mail/queue-mail.consumer';
 import { UserModule } from './modules/user/user.module';
 import { AccountModule } from './modules/user/account/account.module';
+import { HumanResourceModule } from './modules/user/human-resource/human-resource.module';
 
 @Module({
   imports: [
@@ -52,6 +53,10 @@ import { AccountModule } from './modules/user/account/account.module';
       {
         path: 'user',
         module: AccountModule,
+      },
+      {
+        path: 'user',
+        module: HumanResourceModule,
       },
     ]),
     MulterModule.register({ dest: './uploads', storage: './uploads' }),

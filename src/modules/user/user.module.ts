@@ -40,6 +40,7 @@ import { PurchaseService } from './purchase/purchase.service';
 import { SalesEntity } from './sales/entity';
 import { SalesController } from './sales/sales.controller';
 import { SalesService } from './sales/sales.service';
+import { HumanResourceModule } from './human-resource/human-resource.module';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -62,6 +63,7 @@ import { SalesService } from './sales/sales.service';
     ]),
     QueueMailModule,
     AccountModule,
+    HumanResourceModule,
     forwardRef(() => AuthModule),
   ],
   controllers: [
@@ -88,6 +90,6 @@ import { SalesService } from './sales/sales.service';
     PurchaseService,
     SalesService,
   ],
-  exports: [UserService, UserTypeService],
+  exports: [UserService, UserTypeService, BankingService],
 })
 export class UserModule {}

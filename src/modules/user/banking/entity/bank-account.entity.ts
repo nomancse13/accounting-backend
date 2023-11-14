@@ -1,7 +1,14 @@
 import { CommonEntity } from 'src/authentication/common';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CurrencyEntity } from '../../account/entities';
 import { LedgersEntity } from '../../account/ledgers/entity';
+import { SalaryEntity } from '../../human-resource/salary/entity';
 
 @Entity()
 export class BankAccountEntity extends CommonEntity {
@@ -43,4 +50,7 @@ export class BankAccountEntity extends CommonEntity {
     onDelete: 'RESTRICT',
   })
   ledger: LedgersEntity;
+
+  @OneToMany(() => SalaryEntity, (salary) => salary.bankAccount)
+  salary: SalaryEntity[];
 }
