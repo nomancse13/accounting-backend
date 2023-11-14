@@ -41,6 +41,9 @@ import { SalesEntity } from './sales/entity';
 import { SalesController } from './sales/sales.controller';
 import { SalesService } from './sales/sales.service';
 import { HumanResourceModule } from './human-resource/human-resource.module';
+import { ServiceEntity } from './service/entity';
+import { ServiceController } from './service/service.controller';
+import { ItemService } from './service/item.service';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -60,6 +63,7 @@ import { HumanResourceModule } from './human-resource/human-resource.module';
       LoginHistoryEntity,
       PurchaseEntity,
       SalesEntity,
+      ServiceEntity,
     ]),
     QueueMailModule,
     AccountModule,
@@ -77,6 +81,7 @@ import { HumanResourceModule } from './human-resource/human-resource.module';
     VendorsController,
     PurchaseController,
     SalesController,
+    ServiceController,
   ],
   providers: [
     UserService,
@@ -89,6 +94,7 @@ import { HumanResourceModule } from './human-resource/human-resource.module';
     VendorsService,
     PurchaseService,
     SalesService,
+    ItemService,
   ],
   exports: [UserService, UserTypeService, BankingService],
 })
