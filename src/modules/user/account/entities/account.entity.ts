@@ -2,7 +2,7 @@ import { CommonEntity } from 'src/authentication/common';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class PrefixEntity extends CommonEntity {
+export class AccountEntity extends CommonEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     comment: 'primary id for the table',
@@ -10,8 +10,14 @@ export class PrefixEntity extends CommonEntity {
   id: number;
 
   @Column({ type: 'varchar', length: 255 })
-  prefixName: string;
+  code: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  prefixFor: string;
+  accountName: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  nature: string;
+
+  @Column({ type: 'bigint', nullable: true })
+  parentId: number;
 }

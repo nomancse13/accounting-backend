@@ -15,6 +15,9 @@ import {
   PrefixEntity,
   TransactionHistoryEntity,
 } from './entities';
+import { AccountEntity } from './entities/account.entity';
+import { AccountController } from './account.controller';
+import { AccountService } from './account.service';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -26,12 +29,13 @@ import {
       TransactionHistoryEntity,
       ChartOfAccountsEntity,
       PrefixEntity,
+      AccountEntity,
     ]),
     forwardRef(() => AuthModule),
     QueueMailModule,
   ],
-  controllers: [LedgerController, AccountingGroupController],
-  providers: [LedgersService, AccountingGroupService],
-  exports: [LedgersService],
+  controllers: [LedgerController, AccountingGroupController, AccountController],
+  providers: [LedgersService, AccountingGroupService, AccountService],
+  exports: [LedgersService, AccountService],
 })
 export class AccountModule {}

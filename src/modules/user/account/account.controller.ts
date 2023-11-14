@@ -19,37 +19,36 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateAccountingGroupDto, UpdateAccountingGroupDto } from './dtos';
 import {
   PaginationOptionsInterface,
   UserInterface,
 } from 'src/authentication/common/interfaces';
 import { UserPayload } from 'src/authentication/utils/decorators';
-import { AccountingGroupService } from './accounting-group.service';
-import { UpdateOrganizationsDto } from '../../configurations/organizations/dtos';
+import { AccountService } from './account.service';
+import { CreateAccountDto, UpdateAccountDto } from './dtos';
 
-@ApiTags('User|Accounting Group')
+@ApiTags('User|Account')
 @ApiBearerAuth('jwt')
 @UseGuards(UserGuard)
 @Controller({
-  path: 'group',
+  path: 'account',
   version: '1',
 })
-export class AccountingGroupController {
-  constructor(private accountingGroupService: AccountingGroupService) {}
+export class AccountController {
+  constructor(private accountService: AccountService) {}
 
-  //   create a new group
+  //   create a new account
   @ApiOperation({
-    summary: 'create group by a user',
-    description: 'this route is responsible for create a group',
+    summary: 'create account by a user',
+    description: 'this route is responsible for create a account',
   })
   @ApiBody({
-    type: CreateAccountingGroupDto,
+    type: CreateAccountDto,
     description:
-      'How to create a group with body?... here is the example given below!',
+      'How to create a account with body?... here is the example given below!',
     examples: {
       a: {
-        summary: 'enter group info',
+        summary: 'enter account info',
         value: {
           groupName: 'test11',
           groupParent: 1,
@@ -58,32 +57,32 @@ export class AccountingGroupController {
           nature: 'test',
           postedTo: 'test',
           groupHeadType: 'test',
-        } as unknown as CreateAccountingGroupDto,
+        } as unknown as CreateAccountDto,
       },
     },
   })
   @Post()
   async create(
-    @Body() createAccountingGroupDto: CreateAccountingGroupDto,
+    @Body() createAccountDto: CreateAccountDto,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const data = await this.accountingGroupService.createAccGroup(
-      createAccountingGroupDto,
+    const data = await this.accountService.createAccount(
+      createAccountDto,
       userPayload,
     );
 
     return { message: 'successful!', result: data };
   }
 
-  // update an group by id
+  // update an account by id
   @ApiOperation({
-    summary: 'update group by id',
-    description: 'this route is responsible for update group by id',
+    summary: 'update account by id',
+    description: 'this route is responsible for update account by id',
   })
   @ApiBody({
-    type: UpdateOrganizationsDto,
+    type: UpdateAccountDto,
     description:
-      'How to update an group by id?... here is the example given below!',
+      'How to update an account by id?... here is the example given below!',
     examples: {
       a: {
         summary: 'default',
@@ -102,45 +101,45 @@ export class AccountingGroupController {
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'for update a group required id',
+    description: 'for update a account required id',
     required: true,
   })
   @Patch(':id')
   async update(
-    @Body() updateAccountingGroupDto: UpdateAccountingGroupDto,
+    @Body() updateAccountDto: UpdateAccountDto,
     @UserPayload() userPayload: UserInterface,
     @Param('id') id: number,
   ) {
-    const data = await this.accountingGroupService.updateAccGroup(
-      updateAccountingGroupDto,
+    const data = await this.accountService.updateAccount(
+      updateAccountDto,
       userPayload,
       id,
     );
     return { message: 'successful!', result: data };
   }
 
-  // find single group
+  // find single account
   @ApiOperation({
-    summary: 'find single group by id',
-    description: 'this route is responsible for find single group by id',
+    summary: 'find single account by id',
+    description: 'this route is responsible for find single account by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'find single group required id',
+    description: 'find single account required id',
     required: true,
   })
   @Get(':id')
-  async findGroup(@Param('id') id: number) {
-    const data = await this.accountingGroupService.findOneGroup(id);
+  async find(@Param('id') id: number) {
+    const data = await this.accountService.findOneAccount(id);
     return { message: 'successful!', result: data };
   }
 
-  // get all group data with paginaiton
+  // get all account data with paginaiton
   @ApiOperation({
-    summary: 'get all group data with pagination',
+    summary: 'get all account data with pagination',
     description:
-      'this route is responsible for getting all group data with pagination',
+      'this route is responsible for getting all account data with pagination',
   })
   @ApiQuery({
     name: 'limit',
@@ -166,7 +165,7 @@ export class AccountingGroupController {
     @Query('filter') filter: any,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const result = await this.accountingGroupService.findAllGroup(
+    const result = await this.accountService.findAllAccount(
       listQueryParam,
       filter,
       userPayload,
@@ -175,20 +174,20 @@ export class AccountingGroupController {
     return { message: 'successful', result: result };
   }
 
-  // delete single group
+  // delete single account
   @ApiOperation({
-    summary: 'delete single group by id',
-    description: 'this route is responsible for delete single group by id',
+    summary: 'delete single account by id',
+    description: 'this route is responsible for delete single account by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'delete single group required id',
+    description: 'delete single account required id',
     required: true,
   })
   @Delete(':id')
-  async deleteGroup(@Param('id') id: number) {
-    const data = await this.accountingGroupService.deleteGroup(id);
+  async delete(@Param('id') id: number) {
+    const data = await this.accountService.deleteAccount(id);
     return { message: 'successful!', result: data };
   }
 }
