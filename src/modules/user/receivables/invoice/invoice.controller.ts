@@ -27,7 +27,7 @@ import { UserPayload } from 'src/authentication/utils/decorators';
 import { InvoiceService } from './invoice.service';
 import { CreateInvoiceDto, UpdateInvoiceDto } from './dtos';
 
-@ApiTags('User|Invoice')
+@ApiTags('User|Customer Invoice')
 @ApiBearerAuth('jwt')
 @UseGuards(UserGuard)
 @Controller({

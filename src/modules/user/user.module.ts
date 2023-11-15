@@ -25,9 +25,6 @@ import { CountryEntity } from './configurations/entities/country.entity';
 import { SuppliersEntity } from './supplier/entity';
 import { SuppliersController } from './supplier/suppliers.controller';
 import { SuppliersService } from './supplier/suppliers.service';
-import { InvoiceService } from './invoice/invoice.service';
-import { InvoiceController } from './invoice/invoice.controller';
-import { InvoiceEntity } from './invoice/entities';
 import { VendorsController } from './vendors/vendors.controller';
 import { VendorsService } from './vendors/vendors.service';
 import { VendorsEntity } from './vendors/entity';
@@ -53,7 +50,6 @@ import { ReceivablesModule } from './receivables/receivables.module';
       MailConfigurationsEntity,
       CountryEntity,
       SuppliersEntity,
-      InvoiceEntity,
       VendorsEntity,
       CalenderDataEntity,
       DeviceHistoryEntity,
@@ -74,7 +70,6 @@ import { ReceivablesModule } from './receivables/receivables.module';
     OrganizationsController,
     BankingController,
     SuppliersController,
-    InvoiceController,
     VendorsController,
     PurchaseController,
     SalesController,
@@ -86,7 +81,6 @@ import { ReceivablesModule } from './receivables/receivables.module';
     OrganizationsService,
     BankingService,
     SuppliersService,
-    InvoiceService,
     VendorsService,
     PurchaseService,
     SalesService,

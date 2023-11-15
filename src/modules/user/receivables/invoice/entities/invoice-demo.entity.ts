@@ -1,10 +1,10 @@
 import { CommonEntity } from 'src/authentication/common';
+import { CurrencyEntity } from 'src/modules/user/account/entities';
+import { LedgersEntity } from 'src/modules/user/account/ledgers/entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { CurrencyEntity } from '../../account/entities';
-import { LedgersEntity } from '../../account/ledgers/entity';
 
 @Entity()
-export class InvoiceEntity extends CommonEntity {
+export class InvoiceDemoEntity extends CommonEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     comment: 'primary id for the table',
@@ -58,6 +58,9 @@ export class InvoiceEntity extends CommonEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   paymentStatus: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  fileSrc: string;
 
   @ManyToOne(() => LedgersEntity, (ledger) => ledger.invDebit, {
     onDelete: 'RESTRICT',

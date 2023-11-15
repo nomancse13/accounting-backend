@@ -10,12 +10,12 @@ import { UserEntity } from 'src/modules/user/entities';
 import { TransactionHistoryEntity } from '../../entities/transaction-history.entity';
 import { CurrencyEntity } from '../../entities';
 import { BankAccountEntity } from 'src/modules/user/banking/entity';
-import { InvoiceEntity } from 'src/modules/user/invoice/entities';
 import { VendorsEntity } from 'src/modules/user/vendors/entity';
 import { PurchaseEntity } from 'src/modules/user/purchase/entity';
 import { SuppliersEntity } from 'src/modules/user/supplier/entity';
 import { SalesEntity } from 'src/modules/user/sales/entity';
 import { CustomersEntity } from 'src/modules/user/receivables/customers/entity';
+import { InvoiceEntity } from 'src/modules/user/receivables/invoice/entities';
 
 @Entity()
 export class LedgersEntity extends CommonEntity {
@@ -65,11 +65,11 @@ export class LedgersEntity extends CommonEntity {
   @OneToMany(() => BankAccountEntity, (banking) => banking.ledger)
   bankings: BankAccountEntity[];
 
-  @OneToMany(() => InvoiceEntity, (invoice) => invoice.debitLedger)
-  invDebit: InvoiceEntity[];
+  // @OneToMany(() => InvoiceEntity, (invoice) => invoice.debitLedger)
+  // invDebit: InvoiceEntity[];
 
-  @OneToMany(() => InvoiceEntity, (invoice) => invoice.creditLedger)
-  invCredit: InvoiceEntity[];
+  // @OneToMany(() => InvoiceEntity, (invoice) => invoice.creditLedger)
+  // invCredit: InvoiceEntity[];
 
   @OneToMany(() => VendorsEntity, (vendors) => vendors.ledger)
   vendors: VendorsEntity[];

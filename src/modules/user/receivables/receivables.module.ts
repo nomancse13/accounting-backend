@@ -11,6 +11,9 @@ import { AccountModule } from '../account/account.module';
 import { ReceiptEntity } from './money-receipt/entity';
 import { ReceiptController } from './money-receipt/receipt.controller';
 import { ReceiptService } from './money-receipt/receipt.service';
+import { InvoiceEntity } from './invoice/entities';
+import { InvoiceController } from './invoice/invoice.controller';
+import { InvoiceService } from './invoice/invoice.service';
 
 /**Module */
 @Module({
@@ -19,12 +22,23 @@ import { ReceiptService } from './money-receipt/receipt.service';
       SaleVoucherEntity,
       CustomersEntity,
       ReceiptEntity,
+      InvoiceEntity,
     ]),
     forwardRef(() => UserModule),
     AccountModule,
   ],
-  controllers: [SaleVoucherController, CustomersController, ReceiptController],
-  providers: [SaleVoucherService, CustomersService, ReceiptService],
+  controllers: [
+    InvoiceController,
+    SaleVoucherController,
+    CustomersController,
+    ReceiptController,
+  ],
+  providers: [
+    InvoiceService,
+    SaleVoucherService,
+    CustomersService,
+    ReceiptService,
+  ],
   exports: [SaleVoucherService, CustomersService, ReceiptService],
 })
 export class ReceivablesModule {}

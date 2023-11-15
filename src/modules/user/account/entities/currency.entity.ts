@@ -3,12 +3,12 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from 'src/modules/user/entities';
 import { LedgersEntity } from '../ledgers/entity';
 import { BankAccountEntity } from '../../banking/entity';
-import { InvoiceEntity } from '../../invoice/entities';
 import { VendorsEntity } from '../../vendors/entity';
 import { PurchaseEntity } from '../../purchase/entity';
 import { SuppliersEntity } from '../../supplier/entity';
 import { SalesEntity } from '../../sales/entity';
 import { CustomersEntity } from '../../receivables/customers/entity';
+import { InvoiceEntity } from '../../receivables/invoice/entities';
 
 @Entity()
 export class CurrencyEntity extends CommonEntity {
@@ -53,11 +53,11 @@ export class CurrencyEntity extends CommonEntity {
   @OneToMany(() => BankAccountEntity, (banking) => banking.currency)
   bankings: BankAccountEntity[];
 
-  @OneToMany(() => InvoiceEntity, (invoice) => invoice.debitCurrencies)
-  invDebitCurr: InvoiceEntity[];
+  // @OneToMany(() => InvoiceEntity, (invoice) => invoice.debitCurrencies)
+  // invDebitCurr: InvoiceEntity[];
 
-  @OneToMany(() => InvoiceEntity, (invoice) => invoice.creditCurrencies)
-  invCreditCurr: InvoiceEntity[];
+  // @OneToMany(() => InvoiceEntity, (invoice) => invoice.creditCurrencies)
+  // invCreditCurr: InvoiceEntity[];
 
   @OneToMany(() => VendorsEntity, (vendors) => vendors.currency)
   vendors: VendorsEntity[];
