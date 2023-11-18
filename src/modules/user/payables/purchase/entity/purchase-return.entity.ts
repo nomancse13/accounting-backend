@@ -16,7 +16,7 @@ export class PurchaseRetrunEntity extends CommonEntity {
   @Column({ type: 'varchar', length: 255 })
   date: string;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   returnAmount: number;
 
   @Column({ type: 'bigint' })

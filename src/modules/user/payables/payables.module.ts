@@ -13,6 +13,9 @@ import { PaymentVoucherService } from './payment-voucher/payment-voucher.service
 import { PurchaseRetrunEntity } from './purchase/entity';
 import { PurchaseReturnController } from './purchase/purchase-return.controller';
 import { PurchaseReturnService } from './purchase/purchase-return.service';
+import { ExpensesEntity } from './expenses/entity';
+import { ExpensesController } from './expenses/expenses.controller';
+import { ExpensesService } from './expenses/expenses.service';
 
 /**Module */
 @Module({
@@ -22,6 +25,7 @@ import { PurchaseReturnService } from './purchase/purchase-return.service';
       SupplierInvoiceEntity,
       PaymentVoucherEntity,
       PurchaseRetrunEntity,
+      ExpensesEntity,
     ]),
     AccountModule,
   ],
@@ -30,12 +34,14 @@ import { PurchaseReturnService } from './purchase/purchase-return.service';
     SupplierInvoiceController,
     PaymentVoucherController,
     PurchaseReturnController,
+    ExpensesController,
   ],
   providers: [
     SuppliersService,
     SupplierInvoiceService,
     PaymentVoucherService,
     PurchaseReturnService,
+    ExpensesService,
   ],
   exports: [SuppliersService],
 })
