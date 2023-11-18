@@ -24,28 +24,28 @@ import {
   UserInterface,
 } from 'src/authentication/common/interfaces';
 import { UserPayload } from 'src/authentication/utils/decorators';
-import { PurchaseVoucherService } from './purchase-voucher.service';
-import { CreatePurchaseVoucherDto, UpdatePurchaseVoucherDto } from './dtos';
+import { PaymentVoucherService } from './payment-voucher.service';
+import { CreatePaymentVoucherDto, UpdatePaymentVoucherDto } from './dtos';
 
-@ApiTags('User|Purchase Voucher')
+@ApiTags('User|Payment Voucher')
 @ApiBearerAuth('jwt')
 @UseGuards(UserGuard)
 @Controller({
-  path: 'purchase/voucher',
+  path: 'payment/voucher',
   version: '1',
 })
-export class PurchaseVoucherController {
-  constructor(private purchaseVoucherService: PurchaseVoucherService) {}
+export class PaymentVoucherController {
+  constructor(private paymentVoucherService: PaymentVoucherService) {}
 
-  //   create a new purchase voucher
+  //   create a new payment voucher
   @ApiOperation({
-    summary: 'create purchase voucher by a user',
-    description: 'this route is responsible for create a purchase voucher',
+    summary: 'create payment voucher by a user',
+    description: 'this route is responsible for create a payment voucher',
   })
   @ApiBody({
-    type: CreatePurchaseVoucherDto,
+    type: CreatePaymentVoucherDto,
     description:
-      'How to create a purchase voucher with body?... here is the example given below!',
+      'How to create a payment voucher with body?... here is the example given below!',
     examples: {
       a: {
         summary: 'enter sale voucher',
@@ -59,32 +59,32 @@ export class PurchaseVoucherController {
           refDoc: 6,
           carrier: 'sdfjdofjdsfl',
           narration: 'sdfjdofjdsfl',
-        } as unknown as CreatePurchaseVoucherDto,
+        } as unknown as CreatePaymentVoucherDto,
       },
     },
   })
   @Post()
   async create(
-    @Body() createPurchaseVoucherDto: CreatePurchaseVoucherDto,
+    @Body() createpaymentVoucherDto: CreatePaymentVoucherDto,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const data = await this.purchaseVoucherService.createPurchaseVoucher(
-      createPurchaseVoucherDto,
+    const data = await this.paymentVoucherService.createPaymentVoucher(
+      createpaymentVoucherDto,
       userPayload,
     );
 
     return { message: 'successful!', result: data };
   }
 
-  // update a purchase voucher by id
+  // update a payment voucher by id
   @ApiOperation({
-    summary: 'update purchase voucher by id',
-    description: 'this route is responsible for update purchase voucher by id',
+    summary: 'update payment voucher by id',
+    description: 'this route is responsible for update payment voucher by id',
   })
   @ApiBody({
-    type: UpdatePurchaseVoucherDto,
+    type: UpdatePaymentVoucherDto,
     description:
-      'How to update a purchase voucher by id?... here is the example given below!',
+      'How to update a payment voucher by id?... here is the example given below!',
     examples: {
       a: {
         summary: 'default',
@@ -102,47 +102,46 @@ export class PurchaseVoucherController {
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'for update a purchase voucher required id',
+    description: 'for update a payment voucher required id',
     required: true,
   })
   @Patch(':id')
   async update(
-    @Body() updatePurchaseVoucherDto: UpdatePurchaseVoucherDto,
+    @Body() updatePaymentVoucherDto: UpdatePaymentVoucherDto,
     @UserPayload() userPayload: UserInterface,
     @Param('id') id: number,
   ) {
-    const data = await this.purchaseVoucherService.updatePurchaseVoucher(
-      updatePurchaseVoucherDto,
+    const data = await this.paymentVoucherService.updatepaymentVoucher(
+      updatePaymentVoucherDto,
       userPayload,
       id,
     );
     return { message: 'successful!', result: data };
   }
 
-  // find single purchase voucher
+  // find single payment voucher
   @ApiOperation({
-    summary: 'find single purchase voucher by id',
+    summary: 'find single payment voucher by id',
     description:
-      'this route is responsible for find single purchase voucher by id',
+      'this route is responsible for find single payment voucher by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'find single purchase voucher required id',
+    description: 'find single payment voucher required id',
     required: true,
   })
   @Get(':id')
   async findSingle(@Param('id') id: number) {
-    const data =
-      await this.purchaseVoucherService.findOnePurchaseVoucherData(id);
+    const data = await this.paymentVoucherService.findOnepaymentVoucherData(id);
     return { message: 'successful!', result: data };
   }
 
-  // get all purchase voucher data with paginaiton
+  // get all payment voucher data with paginaiton
   @ApiOperation({
-    summary: 'get all purchase voucher data with pagination',
+    summary: 'get all payment voucher data with pagination',
     description:
-      'this route is responsible for getting all purchase voucher data with pagination',
+      'this route is responsible for getting all payment voucher data with pagination',
   })
   @ApiQuery({
     name: 'limit',
@@ -168,7 +167,7 @@ export class PurchaseVoucherController {
     @Query('filter') filter: any,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const result = await this.purchaseVoucherService.findAllPurchaseVoucherData(
+    const result = await this.paymentVoucherService.findAllpaymentVoucherData(
       listQueryParam,
       filter,
       userPayload,
@@ -177,21 +176,21 @@ export class PurchaseVoucherController {
     return { message: 'successful', result: result };
   }
 
-  // delete single purchase voucher account
+  // delete single payment voucher account
   @ApiOperation({
-    summary: 'delete single purchase voucher account by id',
+    summary: 'delete single payment voucher account by id',
     description:
-      'this route is responsible for delete single purchase voucher account by id',
+      'this route is responsible for delete single payment voucher account by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'delete single purchase voucher account required id',
+    description: 'delete single payment voucher account required id',
     required: true,
   })
   @Delete(':id')
   async delete(@Param('id') id: number) {
-    const data = await this.purchaseVoucherService.deletePurchaseVoucher(id);
+    const data = await this.paymentVoucherService.deletepaymentVoucher(id);
     return { message: 'successful!', result: data };
   }
 }

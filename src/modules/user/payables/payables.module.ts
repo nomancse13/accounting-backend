@@ -7,25 +7,26 @@ import { AccountModule } from '../account/account.module';
 import { SupplierInvoiceEntity } from './supplier-invoice/entities';
 import { SupplierInvoiceController } from './supplier-invoice/supplier-invoice.controller';
 import { SupplierInvoiceService } from './supplier-invoice/supplier-invoice.service';
-import { PurchaseVoucherEntity } from './payment-voucher/entity';
-import { PurchaseVoucherController } from './payment-voucher/purchase-voucher.controller';
-import { PurchaseVoucherService } from './payment-voucher/purchase-voucher.service';
+import { PaymentVoucherEntity } from './payment-voucher/entity';
+import { PaymentVoucherController } from './payment-voucher/payment-voucher.controller';
+import { PaymentVoucherService } from './payment-voucher/payment-voucher.service';
+
 /**Module */
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       SuppliersEntity,
       SupplierInvoiceEntity,
-      PurchaseVoucherEntity,
+      PaymentVoucherEntity,
     ]),
     AccountModule,
   ],
   controllers: [
     SuppliersController,
     SupplierInvoiceController,
-    PurchaseVoucherController,
+    PaymentVoucherController,
   ],
-  providers: [SuppliersService, SupplierInvoiceService, PurchaseVoucherService],
+  providers: [SuppliersService, SupplierInvoiceService, PaymentVoucherService],
   exports: [SuppliersService],
 })
 export class PayablesModule {}

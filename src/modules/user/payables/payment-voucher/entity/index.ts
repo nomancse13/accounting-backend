@@ -1,1 +1,1 @@
-export * from './purchase-voucher.entity';
+export * from './payment-voucher.entity';

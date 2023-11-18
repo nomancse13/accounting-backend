@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { SupplierInvoiceEntity } from '../../supplier-invoice/entities';
-import { PurchaseVoucherEntity } from '../../payment-voucher/entity';
+import { PaymentVoucherEntity } from '../../payment-voucher/entity';
 
 @Entity()
 export class SuppliersEntity extends CommonEntity {
@@ -48,8 +48,8 @@ export class SuppliersEntity extends CommonEntity {
   invoice: SupplierInvoiceEntity[];
 
   @OneToMany(
-    () => PurchaseVoucherEntity,
-    (puchaseVoucher) => puchaseVoucher.supplier,
+    () => PaymentVoucherEntity,
+    (paymentVoucher) => paymentVoucher.supplier,
   )
-  puchaseVoucher: PurchaseVoucherEntity[];
+  paymentVoucher: PaymentVoucherEntity[];
 }

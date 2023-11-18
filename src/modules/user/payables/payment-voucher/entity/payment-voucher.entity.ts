@@ -4,7 +4,7 @@ import { AccountEntity } from 'src/modules/user/account/entities/account.entity'
 import { SuppliersEntity } from '../../supplier/entity';
 
 @Entity()
-export class PurchaseVoucherEntity extends CommonEntity {
+export class PaymentVoucherEntity extends CommonEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     comment: 'primary id for the table',
@@ -29,7 +29,7 @@ export class PurchaseVoucherEntity extends CommonEntity {
   @Column({ type: 'text', nullable: true })
   narration: string;
 
-  @ManyToOne(() => SuppliersEntity, (supplier) => supplier.puchaseVoucher, {
+  @ManyToOne(() => SuppliersEntity, (supplier) => supplier.paymentVoucher, {
     onDelete: 'RESTRICT',
   })
   supplier: SuppliersEntity;

@@ -1,7 +1,7 @@
 import { CommonEntity } from 'src/authentication/common';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ReceiptEntity } from '../../receivables/money-receipt/entity';
-import { PurchaseVoucherEntity } from '../../payables/payment-voucher/entity';
+import { PaymentVoucherEntity } from '../../payables/payment-voucher/entity';
 
 @Entity()
 export class AccountEntity extends CommonEntity {
@@ -27,8 +27,8 @@ export class AccountEntity extends CommonEntity {
   receipts: ReceiptEntity[];
 
   @OneToMany(
-    () => PurchaseVoucherEntity,
-    (puchaseVoucher) => puchaseVoucher.account,
+    () => PaymentVoucherEntity,
+    (paymentVoucher) => paymentVoucher.account,
   )
-  puchaseVoucher: PurchaseVoucherEntity[];
+  paymentVoucher: PaymentVoucherEntity[];
 }

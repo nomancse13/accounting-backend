@@ -1,2 +1,2 @@
-export * from './create-puchase-voucher.dto';
-export * from './update-puchase-voucher.dto';
+export * from './create-payment-voucher.dto';
+export * from './update-payment-voucher.dto';
