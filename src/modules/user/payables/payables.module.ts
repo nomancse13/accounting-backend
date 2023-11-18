@@ -10,6 +10,9 @@ import { SupplierInvoiceService } from './supplier-invoice/supplier-invoice.serv
 import { PaymentVoucherEntity } from './payment-voucher/entity';
 import { PaymentVoucherController } from './payment-voucher/payment-voucher.controller';
 import { PaymentVoucherService } from './payment-voucher/payment-voucher.service';
+import { PurchaseRetrunEntity } from './purchase/entity';
+import { PurchaseReturnController } from './purchase/purchase-return.controller';
+import { PurchaseReturnService } from './purchase/purchase-return.service';
 
 /**Module */
 @Module({
@@ -18,6 +21,7 @@ import { PaymentVoucherService } from './payment-voucher/payment-voucher.service
       SuppliersEntity,
       SupplierInvoiceEntity,
       PaymentVoucherEntity,
+      PurchaseRetrunEntity,
     ]),
     AccountModule,
   ],
@@ -25,8 +29,14 @@ import { PaymentVoucherService } from './payment-voucher/payment-voucher.service
     SuppliersController,
     SupplierInvoiceController,
     PaymentVoucherController,
+    PurchaseReturnController,
   ],
-  providers: [SuppliersService, SupplierInvoiceService, PaymentVoucherService],
+  providers: [
+    SuppliersService,
+    SupplierInvoiceService,
+    PaymentVoucherService,
+    PurchaseReturnService,
+  ],
   exports: [SuppliersService],
 })
 export class PayablesModule {}

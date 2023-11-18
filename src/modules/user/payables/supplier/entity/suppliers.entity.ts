@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { SupplierInvoiceEntity } from '../../supplier-invoice/entities';
 import { PaymentVoucherEntity } from '../../payment-voucher/entity';
+import { PurchaseRetrunEntity } from '../../purchase/entity';
 
 @Entity()
 export class SuppliersEntity extends CommonEntity {
@@ -52,4 +53,10 @@ export class SuppliersEntity extends CommonEntity {
     (paymentVoucher) => paymentVoucher.supplier,
   )
   paymentVoucher: PaymentVoucherEntity[];
+
+  @OneToMany(
+    () => PurchaseRetrunEntity,
+    (purchaseReturn) => purchaseReturn.supplier,
+  )
+  purchaseReturn: PurchaseRetrunEntity[];
 }
