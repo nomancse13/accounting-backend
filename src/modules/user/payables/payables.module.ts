@@ -16,6 +16,9 @@ import { PurchaseReturnService } from './purchase/purchase-return.service';
 import { ExpensesEntity } from './expenses/entity';
 import { ExpensesController } from './expenses/expenses.controller';
 import { ExpensesService } from './expenses/expenses.service';
+import { LsoLpoEntity } from './lso-lpo/entities';
+import { LsoLpoController } from './lso-lpo/lso-lpo.controller';
+import { LsoLpoService } from './lso-lpo/lso-lpo.service';
 
 /**Module */
 @Module({
@@ -26,6 +29,7 @@ import { ExpensesService } from './expenses/expenses.service';
       PaymentVoucherEntity,
       PurchaseRetrunEntity,
       ExpensesEntity,
+      LsoLpoEntity,
     ]),
     AccountModule,
   ],
@@ -35,6 +39,7 @@ import { ExpensesService } from './expenses/expenses.service';
     PaymentVoucherController,
     PurchaseReturnController,
     ExpensesController,
+    LsoLpoController,
   ],
   providers: [
     SuppliersService,
@@ -42,6 +47,7 @@ import { ExpensesService } from './expenses/expenses.service';
     PaymentVoucherService,
     PurchaseReturnService,
     ExpensesService,
+    LsoLpoService,
   ],
   exports: [SuppliersService],
 })
