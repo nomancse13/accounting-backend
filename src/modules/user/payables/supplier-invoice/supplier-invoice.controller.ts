@@ -24,31 +24,31 @@ import {
   UserInterface,
 } from 'src/authentication/common/interfaces';
 import { UserPayload } from 'src/authentication/utils/decorators';
-import { InvoiceService } from './invoice.service';
-import { CreateInvoiceDto, UpdateInvoiceDto } from './dtos';
+import { SupplierInvoiceService } from './supplier-invoice.service';
+import { CreateSupplierInvoiceDto, UpdateSupplierInvoiceDto } from './dtos';
 
-@ApiTags('User|Customer Invoice')
+@ApiTags('User|Supplier Invoice')
 @ApiBearerAuth('jwt')
 @UseGuards(UserGuard)
 @Controller({
-  path: 'invoice',
+  path: 'supplier/invoice',
   version: '1',
 })
-export class InvoiceController {
-  constructor(private invoiceService: InvoiceService) {}
+export class SupplierInvoiceController {
+  constructor(private supplierInvoiceService: SupplierInvoiceService) {}
 
-  //   create a new invoice
+  //   create a new supplier invoice
   @ApiOperation({
-    summary: 'create invoice by a user',
-    description: 'this route is responsible for create a invoice',
+    summary: 'create supplier invoice by a user',
+    description: 'this route is responsible for create a supplier invoice',
   })
   @ApiBody({
-    type: CreateInvoiceDto,
+    type: CreateSupplierInvoiceDto,
     description:
-      'How to create a invoice with body?... here is the example given below!',
+      'How to create a supplier invoice with body?... here is the example given below!',
     examples: {
       a: {
-        summary: 'enter invoice',
+        summary: 'enter supplier invoice',
         value: {
           invoiceNo: 'jsdhfdo',
           month: 'November',
@@ -75,32 +75,32 @@ export class InvoiceController {
               amount: 23,
             },
           ],
-        } as unknown as CreateInvoiceDto,
+        } as unknown as CreateSupplierInvoiceDto,
       },
     },
   })
   @Post()
   async create(
-    @Body() createInvoiceDto: CreateInvoiceDto,
+    @Body() createSupplierInvoiceDto: CreateSupplierInvoiceDto,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const data = await this.invoiceService.createInvoice(
-      createInvoiceDto,
+    const data = await this.supplierInvoiceService.createSupplierInvoice(
+      createSupplierInvoiceDto,
       userPayload,
     );
 
     return { message: 'successful!', result: data };
   }
 
-  // update a invoice by id
+  // update a supplier invoice by id
   @ApiOperation({
-    summary: 'update invoice by id',
-    description: 'this route is responsible for update invoice by id',
+    summary: 'update supplier invoice by id',
+    description: 'this route is responsible for update supplier invoice by id',
   })
   @ApiBody({
-    type: UpdateInvoiceDto,
+    type: UpdateSupplierInvoiceDto,
     description:
-      'How to update a invoice by id?... here is the example given below!',
+      'How to update a supplier invoice by id?... here is the example given below!',
     examples: {
       a: {
         summary: 'default',
@@ -137,45 +137,46 @@ export class InvoiceController {
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'for update a invoice required id',
+    description: 'for update a supplier invoice required id',
     required: true,
   })
   @Patch(':id')
   async update(
-    @Body() updateInvoiceDto: UpdateInvoiceDto,
+    @Body() updateSupplierInvoiceDto: UpdateSupplierInvoiceDto,
     @UserPayload() userPayload: UserInterface,
     @Param('id') id: number,
   ) {
-    const data = await this.invoiceService.updateInvoice(
-      updateInvoiceDto,
+    const data = await this.supplierInvoiceService.updateSupplierInvoice(
+      updateSupplierInvoiceDto,
       userPayload,
       id,
     );
     return { message: 'successful!', result: data };
   }
 
-  // find single invoice
+  // find single supplier invoice
   @ApiOperation({
-    summary: 'find single invoice by id',
-    description: 'this route is responsible for find single invoice by id',
+    summary: 'find single supplier invoice by id',
+    description:
+      'this route is responsible for find single supplier invoice by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'find single invoice required id',
+    description: 'find single supplier invoice required id',
     required: true,
   })
   @Get(':id')
-  async findSingleInvoice(@Param('id') id: number) {
-    const data = await this.invoiceService.findOneInvoice(id);
+  async findOne(@Param('id') id: number) {
+    const data = await this.supplierInvoiceService.findOneSupplierInvoice(id);
     return { message: 'successful!', result: data };
   }
 
-  // get all invoice data with paginaiton
+  // get all supplier invoice data with paginaiton
   @ApiOperation({
-    summary: 'get all invoice data with pagination',
+    summary: 'get all supplier invoice data with pagination',
     description:
-      'this route is responsible for getting all invoice data with pagination',
+      'this route is responsible for getting all supplier invoice data with pagination',
   })
   @ApiQuery({
     name: 'limit',
@@ -196,12 +197,12 @@ export class InvoiceController {
     required: false,
   })
   @Get('get/all')
-  async getAllInvoice(
+  async getAll(
     @Query() listQueryParam: PaginationOptionsInterface,
     @Query('filter') filter: any,
     @UserPayload() userPayload: UserInterface,
   ) {
-    const result = await this.invoiceService.findAllInvoiceData(
+    const result = await this.supplierInvoiceService.findAllSupplierInvoiceData(
       listQueryParam,
       filter,
       userPayload,
@@ -210,21 +211,21 @@ export class InvoiceController {
     return { message: 'successful', result: result };
   }
 
-  // delete single invoice account
+  // delete single supplier invoice account
   @ApiOperation({
-    summary: 'delete single invoice account by id',
+    summary: 'delete single supplier invoice account by id',
     description:
-      'this route is responsible for delete single invoice account by id',
+      'this route is responsible for delete single supplier invoice account by id',
   })
   @ApiParam({
     name: 'id',
     type: Number,
-    description: 'delete single invoice account required id',
+    description: 'delete single supplier invoice account required id',
     required: true,
   })
   @Delete(':id')
-  async deleteInvoice(@Param('id') id: number) {
-    const data = await this.invoiceService.deleteInvoice(id);
+  async delete(@Param('id') id: number) {
+    const data = await this.supplierInvoiceService.deleteSupplierInvoice(id);
     return { message: 'successful!', result: data };
   }
 }

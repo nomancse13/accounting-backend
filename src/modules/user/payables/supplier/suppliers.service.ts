@@ -13,9 +13,9 @@ import { BaseRepository } from 'typeorm-transactional-cls-hooked';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ErrorMessage, UserTypesEnum } from 'src/authentication/common/enum';
 import { Brackets } from 'typeorm';
-import { LedgersService } from '../account/ledgers/ledgers.service';
 import { SuppliersEntity } from './entity';
 import { CreateSuppliersDto, UpdateSuppliersDto } from './dtos';
+import { LedgersService } from '../../account/ledgers/ledgers.service';
 
 @Injectable()
 export class SuppliersService {

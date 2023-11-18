@@ -42,15 +42,27 @@ export class InvoiceService {
 
       createInvoiceDto['createdBy'] = userPayload.id;
 
-      const insertData = await this.invoiceRepository.save(createInvoiceDto);
+      let total = createInvoiceDto.total;
 
-      insertData.customer = customerInfo;
+      if (createInvoiceDto.vat == true) {
+        total = createInvoiceDto.subtotal * 0.16;
+      }
 
-      const saveInvoice = await this.invoiceRepository.save(insertData);
+      if (createInvoiceDto.total == total) {
+        const insertData = await this.invoiceRepository.save(createInvoiceDto);
 
-      // userType.users = [...userType.users, insertData];
+        insertData.customer = customerInfo;
 
-      return saveInvoice;
+        const saveInvoice = await this.invoiceRepository.save(insertData);
+
+        // userType.users = [...userType.users, insertData];
+
+        return saveInvoice;
+      } else {
+        throw new BadRequestException(
+          `total count is not correct. please fix it!!!`,
+        );
+      }
     } catch (e) {
       throw new BadRequestException(ErrorMessage.INSERT_FAILED);
     }
@@ -69,31 +81,35 @@ export class InvoiceService {
         updateInvoiceDto.customerId,
       );
 
+      let total = updateInvoiceDto.total;
+
+      if (updateInvoiceDto.vat == true) {
+        total = updateInvoiceDto.subtotal * 0.16;
+      }
+
       delete updateInvoiceDto.customerId;
 
-      const bankingData = await this.invoiceRepository
-        .createQueryBuilder()
-        .update(InvoiceEntity, updateInvoiceDto)
-        .where(`id = '${id}'`)
-        .execute();
-
-      const dataFind = await this.invoiceRepository
-        .createQueryBuilder('invoice')
-        .where(`invoice.id = ${id}`)
-        .getOne();
-
-      dataFind.customer = customerInfo;
-
-      await this.invoiceRepository.save(dataFind);
-
-      return `invoice data updated successfully!!!`;
+      if (updateInvoiceDto.total == total) {
+        const bankingData = await this.invoiceRepository
+          .createQueryBuilder()
+          .update(InvoiceEntity, updateInvoiceDto)
+          .where(`id = '${id}'`)
+          .execute();
+        const dataFind = await this.invoiceRepository
+          .createQueryBuilder('invoice')
+          .where(`invoice.id = ${id}`)
+          .getOne();
+        dataFind.customer = customerInfo;
+        await this.invoiceRepository.save(dataFind);
+        return `invoice data updated successfully!!!`;
+      } else {
+        throw new BadRequestException(
+          `total count is not correct. please fix it!!!`,
+        );
+      }
     } catch (e) {
       throw new BadRequestException(ErrorMessage.UPDATE_FAILED);
     }
-
-    // if (data.affected === 0) {
-    //   throw new BadRequestException(ErrorMessage.UPDATE_FAILED);
-    // }
   }
 
   // find all invoice data

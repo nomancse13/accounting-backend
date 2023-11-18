@@ -22,9 +22,6 @@ import { OrganizationsController } from './configurations/organizations/organiza
 import { OrganizationsService } from './configurations/organizations/organizations.service';
 import { MailConfigurationsEntity } from './configurations/entities/mailConfigurations.entity';
 import { CountryEntity } from './configurations/entities/country.entity';
-import { SuppliersEntity } from './supplier/entity';
-import { SuppliersController } from './supplier/suppliers.controller';
-import { SuppliersService } from './supplier/suppliers.service';
 import { VendorsController } from './vendors/vendors.controller';
 import { VendorsService } from './vendors/vendors.service';
 import { VendorsEntity } from './vendors/entity';
@@ -39,6 +36,7 @@ import { ServiceEntity } from './service/entity';
 import { ServiceController } from './service/service.controller';
 import { ItemService } from './service/item.service';
 import { ReceivablesModule } from './receivables/receivables.module';
+import { PayablesModule } from './payables/payables.module';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -49,7 +47,6 @@ import { ReceivablesModule } from './receivables/receivables.module';
       BankAccountEntity,
       MailConfigurationsEntity,
       CountryEntity,
-      SuppliersEntity,
       VendorsEntity,
       CalenderDataEntity,
       DeviceHistoryEntity,
@@ -63,13 +60,13 @@ import { ReceivablesModule } from './receivables/receivables.module';
     HumanResourceModule,
     ReceivablesModule,
     forwardRef(() => AuthModule),
+    PayablesModule,
   ],
   controllers: [
     UserController,
     UserTypeController,
     OrganizationsController,
     BankingController,
-    SuppliersController,
     VendorsController,
     PurchaseController,
     SalesController,
@@ -80,7 +77,6 @@ import { ReceivablesModule } from './receivables/receivables.module';
     UserTypeService,
     OrganizationsService,
     BankingService,
-    SuppliersService,
     VendorsService,
     PurchaseService,
     SalesService,

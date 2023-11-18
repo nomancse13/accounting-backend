@@ -5,10 +5,10 @@ import { LedgersEntity } from '../ledgers/entity';
 import { BankAccountEntity } from '../../banking/entity';
 import { VendorsEntity } from '../../vendors/entity';
 import { PurchaseEntity } from '../../purchase/entity';
-import { SuppliersEntity } from '../../supplier/entity';
 import { SalesEntity } from '../../sales/entity';
 import { CustomersEntity } from '../../receivables/customers/entity';
 import { InvoiceEntity } from '../../receivables/invoice/entities';
+import { SuppliersEntity } from '../../payables/supplier/entity';
 
 @Entity()
 export class CurrencyEntity extends CommonEntity {

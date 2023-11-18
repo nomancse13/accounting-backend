@@ -12,10 +12,10 @@ import { CurrencyEntity } from '../../entities';
 import { BankAccountEntity } from 'src/modules/user/banking/entity';
 import { VendorsEntity } from 'src/modules/user/vendors/entity';
 import { PurchaseEntity } from 'src/modules/user/purchase/entity';
-import { SuppliersEntity } from 'src/modules/user/supplier/entity';
 import { SalesEntity } from 'src/modules/user/sales/entity';
 import { CustomersEntity } from 'src/modules/user/receivables/customers/entity';
 import { InvoiceEntity } from 'src/modules/user/receivables/invoice/entities';
+import { SuppliersEntity } from 'src/modules/user/payables/supplier/entity';
 
 @Entity()
 export class LedgersEntity extends CommonEntity {

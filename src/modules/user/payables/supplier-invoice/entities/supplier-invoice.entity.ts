@@ -1,9 +1,9 @@
 import { CommonEntity } from 'src/authentication/common';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { CustomersEntity } from '../../customers/entity';
+import { SuppliersEntity } from '../../supplier/entity';
 
 @Entity()
-export class InvoiceEntity extends CommonEntity {
+export class SupplierInvoiceEntity extends CommonEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     comment: 'primary id for the table',
@@ -15,9 +15,6 @@ export class InvoiceEntity extends CommonEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   comment: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  month: string;
 
   @Column({ type: 'timestamp', default: () => 'NOW()' })
   invoiceDate: Date;
@@ -40,8 +37,8 @@ export class InvoiceEntity extends CommonEntity {
   })
   items: any;
 
-  @ManyToOne(() => CustomersEntity, (customer) => customer.invoice, {
+  @ManyToOne(() => SuppliersEntity, (supplier) => supplier.invoice, {
     onDelete: 'RESTRICT',
   })
-  customer: CustomersEntity;
+  supplier: SuppliersEntity;
 }

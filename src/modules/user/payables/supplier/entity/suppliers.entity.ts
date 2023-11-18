@@ -1,7 +1,15 @@
 import { CommonEntity } from 'src/authentication/common';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { CurrencyEntity } from '../../account/entities';
-import { LedgersEntity } from '../../account/ledgers/entity';
+import { CurrencyEntity } from 'src/modules/user/account/entities';
+import { LedgersEntity } from 'src/modules/user/account/ledgers/entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { SupplierInvoiceEntity } from '../../supplier-invoice/entities';
+import { PurchaseVoucherEntity } from '../../payment-voucher/entity';
 
 @Entity()
 export class SuppliersEntity extends CommonEntity {
@@ -35,4 +43,13 @@ export class SuppliersEntity extends CommonEntity {
     onDelete: 'RESTRICT',
   })
   ledger: LedgersEntity;
+
+  @OneToMany(() => SupplierInvoiceEntity, (invoice) => invoice.supplier)
+  invoice: SupplierInvoiceEntity[];
+
+  @OneToMany(
+    () => PurchaseVoucherEntity,
+    (puchaseVoucher) => puchaseVoucher.supplier,
+  )
+  puchaseVoucher: PurchaseVoucherEntity[];
 }

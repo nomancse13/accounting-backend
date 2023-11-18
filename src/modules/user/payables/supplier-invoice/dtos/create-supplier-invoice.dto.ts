@@ -23,12 +23,7 @@ class ItemInfo {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  readonly sellingPrice: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  readonly discount: number;
+  readonly buyingPrice: number;
 
   @ApiProperty()
   @IsNumber()
@@ -36,16 +31,11 @@ class ItemInfo {
   readonly amount: number;
 }
 
-export class CreateInvoiceDto {
+export class CreateSupplierInvoiceDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   invoiceNo: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  month: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -80,7 +70,7 @@ export class CreateInvoiceDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  customerId: number;
+  supplierId: number;
 
   @ApiPropertyOptional({ type: [ItemInfo] })
   @ValidateNested()

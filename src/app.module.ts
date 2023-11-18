@@ -18,6 +18,7 @@ import { UserModule } from './modules/user/user.module';
 import { AccountModule } from './modules/user/account/account.module';
 import { HumanResourceModule } from './modules/user/human-resource/human-resource.module';
 import { ReceivablesModule } from './modules/user/receivables/receivables.module';
+import { PayablesModule } from './modules/user/payables/payables.module';
 
 @Module({
   imports: [
@@ -62,6 +63,10 @@ import { ReceivablesModule } from './modules/user/receivables/receivables.module
       {
         path: 'user',
         module: ReceivablesModule,
+      },
+      {
+        path: 'user',
+        module: PayablesModule,
       },
     ]),
     MulterModule.register({ dest: './uploads', storage: './uploads' }),
