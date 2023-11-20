@@ -7,10 +7,10 @@ export class CreateAccountingGroupDto {
   @IsString()
   groupName: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsNumber()
-  groupParent: number;
+  groupParentId: number;
 
   @ApiProperty()
   @IsNotEmpty()

@@ -52,7 +52,7 @@ export class AccountingGroupController {
         summary: 'enter group info',
         value: {
           groupName: 'test11',
-          groupParent: 1,
+          groupParentId: 1,
           groupIdentifier: 'test',
           groupType: 'test',
           nature: 'test',
@@ -89,7 +89,7 @@ export class AccountingGroupController {
         summary: 'default',
         value: {
           groupName: 'test11',
-          groupParent: 1,
+          groupParentId: 1,
           groupIdentifier: 'test',
           groupType: 'test',
           nature: 'test',

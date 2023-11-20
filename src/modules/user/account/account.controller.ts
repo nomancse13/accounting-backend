@@ -51,7 +51,7 @@ export class AccountController {
         summary: 'enter account info',
         value: {
           groupName: 'test11',
-          groupParent: 1,
+          groupParentId: 1,
           groupIdentifier: 'test',
           groupType: 'test',
           nature: 'test',
@@ -88,7 +88,7 @@ export class AccountController {
         summary: 'default',
         value: {
           groupName: 'test11',
-          groupParent: 1,
+          groupParentId: 1,
           groupIdentifier: 'test',
           groupType: 'test',
           nature: 'test',

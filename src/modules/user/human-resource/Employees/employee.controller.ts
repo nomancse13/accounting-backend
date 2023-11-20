@@ -51,7 +51,7 @@ export class EmployeeController {
         summary: 'enter employee info',
         value: {
           groupName: 'test11',
-          groupParent: 1,
+          groupParentId: 1,
           groupIdentifier: 'test',
           groupType: 'test',
           nature: 'test',
@@ -88,7 +88,7 @@ export class EmployeeController {
         summary: 'default',
         value: {
           groupName: 'test11',
-          groupParent: 1,
+          groupParentId: 1,
           groupIdentifier: 'test',
           groupType: 'test',
           nature: 'test',

@@ -17,6 +17,7 @@ import { CustomersEntity } from 'src/modules/user/receivables/customers/entity';
 import { InvoiceEntity } from 'src/modules/user/receivables/invoice/entities';
 import { SuppliersEntity } from 'src/modules/user/payables/supplier/entity';
 import { ExpensesEntity } from 'src/modules/user/payables/expenses/entity';
+import { ManualJournalsEntity } from '../../manual-journal/entities';
 
 @Entity()
 export class LedgersEntity extends CommonEntity {
@@ -143,4 +144,13 @@ export class LedgersEntity extends CommonEntity {
 
   @OneToMany(() => ExpensesEntity, (paid) => paid.ledgerPaid)
   paid: ExpensesEntity[];
+
+  @OneToMany(() => ManualJournalsEntity, (debitJournal) => debitJournal.debit)
+  debitJournal: ManualJournalsEntity[];
+
+  @OneToMany(
+    () => ManualJournalsEntity,
+    (creditJournal) => creditJournal.credit,
+  )
+  creditJournal: ManualJournalsEntity[];
 }

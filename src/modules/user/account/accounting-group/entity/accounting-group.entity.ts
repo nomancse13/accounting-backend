@@ -1,5 +1,5 @@
 import { CommonEntity } from 'src/authentication/common';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class AccountingGroupEntity extends CommonEntity {
@@ -32,4 +32,7 @@ export class AccountingGroupEntity extends CommonEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   groupHeadType: string;
+
+  // @OneToMany(() => AccountHeadsEntity, (head) => head.parent)
+  // head: AccountHeadsEntity[];
 }

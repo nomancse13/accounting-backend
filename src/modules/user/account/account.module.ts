@@ -18,6 +18,11 @@ import {
 import { AccountEntity } from './entities/account.entity';
 import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
+import { ManualJournalsService } from './manual-journal/manual-journals.service';
+import { ManualJournalsController } from './manual-journal/manual-journals.controller';
+import { ManualJournalsEntity } from './manual-journal/entities';
+import { AccountHeadsController } from './account-heads/account-heads.controller';
+import { AccountHeadsService } from './account-heads/account-heads.service';
 /**controllers */
 /**Authentication strategies */
 @Module({
@@ -30,12 +35,25 @@ import { AccountService } from './account.service';
       ChartOfAccountsEntity,
       PrefixEntity,
       AccountEntity,
+      ManualJournalsEntity,
     ]),
     forwardRef(() => AuthModule),
     QueueMailModule,
   ],
-  controllers: [LedgerController, AccountingGroupController, AccountController],
-  providers: [LedgersService, AccountingGroupService, AccountService],
+  controllers: [
+    LedgerController,
+    AccountingGroupController,
+    AccountController,
+    ManualJournalsController,
+    AccountHeadsController,
+  ],
+  providers: [
+    LedgersService,
+    AccountingGroupService,
+    AccountService,
+    ManualJournalsService,
+    AccountHeadsService,
+  ],
   exports: [LedgersService, AccountService],
 })
 export class AccountModule {}
